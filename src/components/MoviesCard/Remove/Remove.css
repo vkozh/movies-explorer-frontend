@@ -1,0 +1,16 @@
+.remove {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  cursor: pointer;
+}
+
+.remove rect {
+  width: 24px;
+  height: 24px;
+  fill: #F9F9F9;
+}
+
+.remove path {
+  fill: #000;
+}
