@@ -1,2 +1,41 @@
 @import url(./vendor/normalize.css);
 @import url(./vendor/fonts/inter.css);
+
+:root {
+  --main-green: #2be080;
+  --middle-gray: #a0a0a0;
+  --ultra-blue: #3456F3;
+  --blood-red: #ff3055;
+}
+
+.page {
+  font-family: 'Inter', Arial, Helvetica, sans-serif;
+  font-weight: 400;
+  position: relative;
+  color: #000;
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.page h2, .page h3, .page h4 {
+  font-weight: 400;
+}
+
+a:hover, button:hover {
+  opacity: .7;
+  transition: opacity .3s ease;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: default;
+  opacity: 1;
+  background-color: var(--middle-gray);
+}
+
+nobr {
+  white-space: nowrap;
+}
