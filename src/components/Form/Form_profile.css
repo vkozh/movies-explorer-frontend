@@ -1,0 +1,90 @@
+.form_profile {
+  padding: 0;
+  height: auto;
+  max-width: 410px;
+  box-sizing: border-box;
+}
+
+.form_profile .form__greetings {
+  margin: 0 auto 80px;
+}
+
+.formInput__input:disabled {
+  background-color: #fff;
+}
+
+.form_profile .formInput {
+  flex-direction: row;
+  justify-content: space-between;
+  border-bottom: 1px solid #E8E8E8;
+  padding: 0 0 16px;
+  flex-wrap: wrap;
+}
+
+.form_profile .formInput:last-of-type {
+  border: none;
+  padding: 16px 0 0;
+}
+
+.form_profile .formInput__label {
+  font-weight: 500;
+  font-size: 11px;
+  line-height: 1.2;
+  color: #000;
+  margin: 0;
+  padding: 0;
+}
+
+.form_profile .formInput__input {
+  text-align: end;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.form_profile .form__filled-button {
+  background-color: #fff;
+  color: #000;
+  margin: 0;
+}
+
+.form_profile .formInput__error {
+  width: 100%;
+  margin: 0;
+}
+
+@media screen and (min-width: 768px) {
+  .profile {
+    padding-bottom: 76px;
+  }
+
+  .form_profile .form__greetings {
+    margin-bottom: 96px;
+  }
+
+  .form_profile .form__inputs-container {
+    margin-bottom: 210px;
+  }
+
+  .form_profile .form__form {
+    justify-content: start;
+    height: auto;
+  }
+
+  .form_profile .form__filled-button {
+    padding: 0;
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+}
+
+@media screen and (min-width: 1280px) {
+
+  .form_profile .form__greetings {
+    margin-bottom: 123px;
+  }
+
+  .form_profile .form__inputs-container {
+    margin-bottom: 220px;
+  }
+}

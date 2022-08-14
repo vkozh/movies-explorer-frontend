@@ -1,0 +1,36 @@
+.formInput {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.formInput__input {
+  border: none;
+  border-bottom: 1px solid #e8e8e8;
+  margin-bottom: 6px;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.2;
+  outline: none;
+  padding-bottom: 10px;
+}
+
+.formInput__input:focus {
+  border-color: var(--ultra-blue);
+}
+
+.formInput__label {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 8px;
+  line-height: 1.2;
+  color: #a0a0a0;
+  margin: 0 0 5px;
+}
+
+.formInput__error {
+  margin: 0 0 18px;
+  font-size: 10px;
+  line-height: 1.2;
+  color: var(--blood-red);
+}
