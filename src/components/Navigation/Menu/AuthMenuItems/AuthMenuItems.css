@@ -1,0 +1,104 @@
+.menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  flex-grow: 1;
+}
+
+.menu__links {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 44px;
+}
+
+.menu__link {
+  flex-grow: 1;
+  color: #000;
+  text-align: end;
+  margin-right: 14px;
+  text-decoration: none;
+  font-size: 10px;
+}
+
+.menu__link:hover {
+  transition: all .3s ease;
+  opacity: .7;
+}
+
+.header_theme_promo .menu__link {
+  color: #fff;
+}
+
+.menu__link_active {
+  font-weight: 500;
+}
+
+.menu__filled-button {
+  background-color: var(--main-green);
+  font-size: 10px;
+  min-width: 54px;
+  min-height: 26px;
+  border-radius: 3px;
+  border: none;
+  display: flex;
+  margin: auto;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  line-height: 1.6;
+  color: #000;
+  font-weight: 500;
+}
+
+
+.menu__curcled-button {
+  border: 2px solid #aaaaaa33;
+  border-radius: 50px;
+  text-decoration: none;
+  padding: 7px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.header_theme_promo .menu__curcled-button {
+  color: #fff;
+}
+
+.header_theme_promo .menu__icon-profile {
+  filter: invert(1);
+}
+
+.menu__filled-button:hover,
+.menu__curcled-button:hover {
+  transition: all .3s ease;
+  opacity: .8;
+}
+
+.menu__icon-profile {
+  margin-right: 7px;
+}
+
+@media screen and (min-width: 768px) {
+  .menu__filled-button {
+    font-size: 12px;
+  }
+
+  .menu__link {
+    margin-right: 20px;
+    font-size: 13px;
+  }
+
+  .menu__filled-button {
+    min-width: 76px;
+    min-height: 32px;
+  }
+}
+
+@media screen and (min-width: 1280px) {
+  .menu {
+    flex-direction: row;
+  }
+}

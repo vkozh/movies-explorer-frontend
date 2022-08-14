@@ -1,0 +1,121 @@
+.humburger {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: #0000004d;
+  z-index: 10;
+  transition: right .8s ease;
+}
+
+.humburger_closed {
+  position: static;
+  right: -520px;
+}
+
+.humburger__container {
+  background-color: #fff;
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  margin: 0 0 0 auto;
+  height: 100%;
+  padding: 20px 20px 45px;
+  box-sizing: border-box;
+}
+
+.humburger_closed .humburger__container {
+  padding: 0;
+  width: 0;
+}
+
+.header_theme_promo .humburger_closed .humburger__button {
+  filter: invert(1);
+}
+
+.humburger__menu {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 118px 0 0;
+}
+
+.humburger__menu .menu__links {
+  flex-direction: column;
+  padding: 0;
+}
+
+.humburger__menu .menu__link {
+  font-size: 18px;
+  text-align: center;
+  margin: 7px auto;
+  padding-bottom: 7px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: #000;
+}
+
+.humburger__menu .menu__curcled-button {
+  color: #000;
+}
+
+.humburger__menu .menu__icon-profile {
+  filter: invert(0);
+}
+
+.humburger__menu .menu__link_active {
+  border-bottom: 2px solid #000;
+}
+
+.humburger__button {
+  background-image: url(../../../images/close.svg);
+  width: 22px;
+  height: 22px;
+  border: none;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  transition: opacity .3s ease;
+  align-self: end;
+  filter: invert(0);
+  position: absolute;
+  top: 19px;
+}
+
+.humburger__button:hover {
+  opacity: .5;
+}
+
+.humburger_closed .humburger__button {
+  background-image: url(../../../images/humburger.svg);
+  width: 38px;
+  height: 38px;
+}
+
+.humburger_closed .humburger__menu {
+  display: none;
+}
+
+@media screen and (min-width: 768px) {
+  .humburger__container {
+    padding: 29px 29px 90px;
+  }
+
+  .humburger__menu .menu__link {
+    margin: 11px auto;
+    padding-bottom: 4px;
+  }
+
+  .humburger__button {
+    top: 25px;
+  }
+}
+
+@media screen and (min-width: 1280px) {
+  .humburger {
+    display: none;
+  }
+}
