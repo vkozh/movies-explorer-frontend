@@ -17,11 +17,13 @@ export default function SavedMovies({ isLoggedIn, isSavedMovies }) {
   return (
     <>
       <Header isLoggedIn={isLoggedIn} />
-      <SearchForm />
-      {isLoading
-        ? <MoviesCardList isSavedMovies={isSavedMovies} />
-        : <Preloader />
-      }
+      <main className="main">
+        <SearchForm />
+        {isLoading
+          ? <MoviesCardList isSavedMovies={isSavedMovies} />
+          : <Preloader />
+        }
+      </main>
       <Footer />
     </>
   )

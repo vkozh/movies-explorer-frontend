@@ -12,17 +12,19 @@ export default function Main({ isLoggedIn }) {
   const aboutProjectRef = useRef(null);
 
   return (
-    <div className="main">
+    <>
       <Header
         isPromoMenu={true}
         isLoggedIn={isLoggedIn}
       />
-      <Promo ref={aboutProjectRef} />
-      <AboutProject ref={aboutProjectRef} />
-      <Techs />
-      <AboutMe />
-      <Portfolio />
+      <main className="main">
+        <Promo ref={aboutProjectRef} />
+        <AboutProject ref={aboutProjectRef} />
+        <Techs />
+        <AboutMe />
+        <Portfolio />
+      </main>
       <Footer />
-    </div>
+    </>
   )
 }

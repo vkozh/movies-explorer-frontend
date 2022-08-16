@@ -17,11 +17,13 @@ export default function Movies({ isLoggedIn }) {
   return (
     <>
       <Header isLoggedIn={isLoggedIn} />
-      <SearchForm />
-      {isLoading
-        ? <MoviesCardList />
-        : <Preloader />
-      }
+      <main className="main">
+        <SearchForm />
+        {isLoading
+          ? <MoviesCardList />
+          : <Preloader />
+        }
+      </main>
       <Footer />
     </>
   )
