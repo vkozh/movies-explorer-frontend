@@ -21,52 +21,55 @@ export default function Profile({ isLoggedIn, logout, editProfile }) {
   return (
     <>
       <Header isLoggedIn={isLoggedIn} />
-      <div className="section profile">
-        <div className="profile__main">
 
-          <Form
-            showLogo={false}
-            showFooter={false}
-            title={`Привет, ${currentUser.name}!`}
-            textButton={isEdit ? "Сохранить" : "Редактировать"}
-            onSubmit={isEdit ? handleSaveProfile : handleEditProfile}
-            theme="profile"
-          >
-            {({ onChangeInput, inputsData }) =>
-              <>
-                <Input
-                  value={isEdit ? inputsData.name : inputsData.name || currentUser.name}
-                  name="name"
-                  title="Имя"
-                  onChange={onChangeInput}
-                  minLength="2"
-                  maxLength="30"
-                  disabled={!isEdit}
-                />
+      <main className="main">
+        <div className="section profile">
+          <div className="profile__main">
 
-                <Input
-                  value={isEdit ? inputsData.email : inputsData.email || currentUser.email}
-                  name="email"
-                  title="E-mail"
-                  type="email"
-                  disabled={!isEdit}
-                  onChange={onChangeInput}
-                />
-              </>
-            }
-          </Form>
+            <Form
+              showLogo={false}
+              showFooter={false}
+              title={`Привет, ${currentUser.name}!`}
+              textButton={isEdit ? "Сохранить" : "Редактировать"}
+              onSubmit={isEdit ? handleSaveProfile : handleEditProfile}
+              theme="profile"
+            >
+              {({ onChangeInput, inputsData }) =>
+                <>
+                  <Input
+                    value={isEdit ? inputsData.name : inputsData.name || currentUser.name}
+                    name="name"
+                    title="Имя"
+                    onChange={onChangeInput}
+                    minLength="2"
+                    maxLength="30"
+                    disabled={!isEdit}
+                  />
+
+                  <Input
+                    value={isEdit ? inputsData.email : inputsData.email || currentUser.email}
+                    name="email"
+                    title="E-mail"
+                    type="email"
+                    disabled={!isEdit}
+                    onChange={onChangeInput}
+                  />
+                </>
+              }
+            </Form>
+
+          </div>
+
+          <div className="profile__footer">
+            <button
+              className="profile__footer-button"
+              onClick={handleLogout} >
+              Выйти из аккаунта
+            </button>
+          </div>
 
         </div>
-
-        <div className="profile__footer">
-          <button
-            className="profile__footer-button"
-            onClick={handleLogout} >
-            Выйти из аккаунта
-          </button>
-        </div>
-
-      </div>
+      </main>
     </>
   )
 }
