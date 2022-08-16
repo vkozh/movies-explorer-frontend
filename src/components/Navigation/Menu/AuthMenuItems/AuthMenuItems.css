@@ -82,6 +82,10 @@
 }
 
 @media screen and (min-width: 768px) {
+  .menu {
+    flex-direction: row;
+  }
+
   .menu__filled-button {
     font-size: 12px;
   }
@@ -94,11 +98,5 @@
   .menu__filled-button {
     min-width: 76px;
     min-height: 32px;
-  }
-}
-
-@media screen and (min-width: 1280px) {
-  .menu {
-    flex-direction: row;
   }
 }
