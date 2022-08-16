@@ -1,0 +1,83 @@
+.profile {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  flex-grow: 1;
+  padding: 70px 30px 40px;
+}
+
+.profile__main {
+  display: flex;
+  margin: 0 12px 0;
+  max-width: 410px;
+  width: 100%;
+  flex-grow: 1;
+}
+
+.profile__info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 17px;
+}
+
+.profile__field {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.2;
+  text-align: end;
+}
+
+.profile__field_title {
+  font-weight: 500;
+  text-align: start;
+}
+
+.profile__footer {
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  align-items: center;
+}
+
+.profile__footer-button {
+  font-size: 12px;
+  line-height: 1.2;
+  text-decoration: none;
+  color: #000;
+  margin: 0;
+  font-weight: 500;
+  color: var(--blood-red);
+  background-color: #fff;
+  border: none;
+
+}
+
+.profile__footer-button:hover {
+  opacity: .7;
+}
+
+@media screen and (min-width: 768px) {
+  .profile {
+    justify-content: center;
+    padding-top: 80px;
+  }
+
+  .profile__main {
+    flex-grow: 0;
+  }
+
+  .profile__footer {
+    margin-bottom: 33px;
+  }
+
+  .profile__footer-button {
+    font-size: 13px;
+  }
+}
+
+@media screen and (min-width: 1280px) {
+  .profile {
+    padding-top: 72px;
+  }
+}

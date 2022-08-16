@@ -1,0 +1,48 @@
+.about-project__timeline {
+  display: grid;
+  grid-template: 35px 23px/ 1fr 2fr;
+  font-size: 11px;
+  text-align: center;
+  line-height: 0;
+  align-items: center;
+  margin-top: 60px;
+}
+
+.about-project__timeline-time {
+  margin: 0;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-project__timeline-time_bg-color_green {
+  background-color: #2be080;
+}
+
+.about-project__timeline-time_bg-color_gray {
+  background-color: #f2f2f2;
+}
+
+.about-project__timeline-caption {
+  color: #a0a0a0;
+  margin: 4px 0 0;
+}
+
+@media screen and (min-width: 768px) {
+  .about-project__timeline {
+    margin-top: 73px;
+    font-size: 14px;
+    grid-template: 35px 35px/ 1fr 4fr;
+  }
+
+  .about-project__timeline-caption {
+    margin-top: 14px;
+  }
+}
+
+@media screen and (min-width: 1280px) {
+  .about-project__timeline {
+    margin-top: 90px;
+  }
+}

@@ -1,0 +1,20 @@
+.like {
+  width: 24px;
+  cursor: pointer;
+  height: 24px;
+}
+
+.like path {
+  fill: #fff
+}
+
+.like rect {
+  width: 24px;
+  height: 24px;
+  fill: #F9F9F9;
+}
+
+.like_filled path {
+  fill: var(--blood-red);
+  transition: fill .3s ease;
+}
