@@ -7,6 +7,9 @@
   flex-grow: 1;
   justify-content: space-between;
   max-width: 396px;
+  margin: auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .form__form {
@@ -70,8 +73,6 @@
 
   .form {
     justify-content: center;
-    margin: auto;
-    width: 100%;
     padding-top: 25px;
     flex-grow: 0;
   }
