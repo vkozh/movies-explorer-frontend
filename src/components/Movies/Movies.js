@@ -4,24 +4,57 @@ import MoviesCardList from "../MoviesCardList/MoviesCardList"
 import SearchForm from "../SearchForm/SearchForm"
 import Footer from "../Footer/Footer";
 import Preloader from "../../vendor/Preloader/Preloader"
+import { beatfilmMoviesApi, moviesApi } from "../../utils/MoviesApi";
+import { checkIsSaved, formatMovies, formatSavedMovies } from "../../utils/utils";
 
-export default function Movies({ isLoggedIn }) {
+export default function Movies() {
+
   const [isLoading, setIsLoading] = useState(false);
+  const [movies, setMovies] = useState([]);
+  const [savedMovies, setSavedMovies] = useState([]);
+  const [foundMovies, setFoundMovies] = useState([]);
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(true)
-    }, 2000);
+    beatfilmMoviesApi
+      .getMovies(setIsLoading)
+      .then(data => {
+        const movie = formatMovies(data)
+        setMovies(movie)
+        setFoundMovies(movie);
+      })
+      .catch(error => console.log(error));
+
+    moviesApi
+      .getMovies(setIsLoading)
+      .then(data => {
+        let formattedMovies = formatSavedMovies(data)
+        setSavedMovies(formattedMovies)
+      })
+      .catch(error => console.log(error));
   }, [])
+
+  useEffect(() => {
+    let saved = checkIsSaved(movies, savedMovies)
+    setFoundMovies(saved)
+    // console.log(saved)
+  }, [savedMovies, movies])
 
   return (
     <>
-      <Header isLoggedIn={isLoggedIn} />
+      <Header isLoggedIn={true} />
       <main className="main">
-        <SearchForm />
+        <SearchForm
+          movies={movies}
+          foundMovies={foundMovies}
+          setFoundMovies={setFoundMovies}
+        />
+
         {isLoading
-          ? <MoviesCardList />
-          : <Preloader />
+          ? <Preloader />
+          : <MoviesCardList
+            movies={foundMovies}
+            isSavedMovies={false}
+          />
         }
       </main>
       <Footer />

@@ -1,11 +1,11 @@
 import React, { useContext, useState } from "react"
 import "./Profile.css"
 import Header from "../Header/Header";
-import { CurrentUserContext } from "../../utils/contexts/CurrentUserContext"
+import { CurrentUserContext } from "../../contexts/CurrentUserContext"
 import Form from "../Form/Form";
 import Input from "../Input/Input";
 
-export default function Profile({ isLoggedIn, logout, editProfile }) {
+export default function Profile({ logout, editProfile }) {
   const currentUser = useContext(CurrentUserContext)
   const [isEdit, setIsEdit] = useState(false);
   const handleLogout = () => logout();
@@ -20,7 +20,7 @@ export default function Profile({ isLoggedIn, logout, editProfile }) {
 
   return (
     <>
-      <Header isLoggedIn={isLoggedIn} />
+      <Header isLoggedIn={true} />
 
       <main className="main">
         <div className="section profile">

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Main from "../Main/Main";
 import Movies from "../Movies/Movies";
 import Profile from "../Profile/Profile";
@@ -7,63 +7,102 @@ import Register from "../Register/Register";
 import NotFound from "../NotFound/NotFound"
 import Login from "../Login/Login";
 import SavedMovies from "../SavedMovies/SavedMovies";
-import { CurrentUserContext } from "../../utils/contexts/CurrentUserContext"
+import { CurrentUserContext } from "../../contexts/CurrentUserContext"
+import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
+import mainApi from "../../utils/MainApi";
 
 function App() {
 
-  const [isLoggedIn, setIsloggedIn] = useState(false);
-  const [currentUser, setCurrentUser] = useState({ name: "Лера", email: "v.a.kozh@ya.ru" })
+  const [isLoggedIn, setIsloggedIn] = useState(null);
+  const [currentUser, setCurrentUser] = useState({})
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleSignin = ({ name, email }) => {
-    setIsloggedIn(true);
-    setCurrentUser({ name, email })
+  const tokenCheck = () => {
+    mainApi
+      .getUser()
+      .then(user => {
+        if (user) {
+          setIsloggedIn(true)
+          setCurrentUser(user);
+          navigate(location.pathname);
+        }
+        else setIsloggedIn(false)
+      })
+      .catch(error => console.error(error))
   }
 
-  const handleSignup = ({ name, email, password }) => {
-    setIsloggedIn(true);
-    setCurrentUser({
-      name: name,
-      email: email
-    })
+  const handleSignin = (data) => {
+    mainApi
+      .login(data)
+      .then(_ => {
+        tokenCheck();
+        navigate('/movies', { replace: true })
+      })
+      .catch(error => console.error(error))
+  }
+
+  const handleSignup = (data) => {
+    mainApi
+      .register(data)
+      .then(_ => {
+        navigate('/signin', { replace: true })
+      })
+      .catch(error => console.error(error))
   }
 
   const handleLogout = () => {
-    setIsloggedIn(false);
-    setCurrentUser({});
-    navigate("/signin")
+    mainApi
+      .logout()
+      .then(res => {
+        console.log(res)
+        tokenCheck();
+        setCurrentUser({});
+        navigate("/signin", { replace: true })
+      })
+      .catch(error => console.error(error))
   }
 
-  const handleEditProfile = ({ name, email }) => {
-    setCurrentUser({
-      name: name,
-      email: email
-    })
+  const handleEditProfile = (data) => {
+    mainApi
+      .editProfile(data)
+      .then((name, email) => {
+        setCurrentUser({ name, email })
+      })
+      .catch(error => console.error(error))
   }
+
+  useEffect(() => {
+    tokenCheck();
+  }, [])
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
         <Routes>
+
           <Route
             path="/movies"
             element={
-              <Movies isLoggedIn={true} />
+              <ProtectedRoute
+                isLoggedIn={isLoggedIn}
+                component={Movies} />
             } />
 
           <Route
             path="/saved-movies"
             element={
-              <SavedMovies
-                isLoggedIn={true}
-                isSavedMovies={true} />
+              <ProtectedRoute
+                isLoggedIn={isLoggedIn}
+                component={SavedMovies} />
             } />
 
           <Route
             path="/profile"
             element={
-              <Profile
-                isLoggedIn={true}
+              <ProtectedRoute
+                isLoggedIn={isLoggedIn}
+                component={Profile}
                 logout={handleLogout}
                 editProfile={handleEditProfile}
               />

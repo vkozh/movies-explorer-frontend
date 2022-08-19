@@ -4,24 +4,40 @@ import SearchForm from "../SearchForm/SearchForm"
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import Preloader from "../../vendor/Preloader/Preloader"
+import { moviesApi } from "../../utils/MoviesApi";
 
-export default function SavedMovies({ isLoggedIn, isSavedMovies }) {
+export default function SavedMovies() {
   const [isLoading, setIsLoading] = useState(false);
+  const [movies, setMovies] = useState([]);
+  const [foundMovies, setFoundMovies] = useState([]);
+
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(true)
-    }, 2000);
+    moviesApi
+      .getMovies(setIsLoading)
+      .then(data => {
+        setMovies(data)
+        setFoundMovies(data);
+      })
+      .catch();
   }, [])
 
   return (
     <>
-      <Header isLoggedIn={isLoggedIn} />
+      <Header isLoggedIn={true} />
       <main className="main">
-        <SearchForm />
+        <SearchForm
+          movies={movies}
+          foundMovies={foundMovies}
+          setFoundMovies={setFoundMovies}
+        />
+
         {isLoading
-          ? <MoviesCardList isSavedMovies={isSavedMovies} />
-          : <Preloader />
+          ? <Preloader />
+          : <MoviesCardList
+            movies={foundMovies}
+            isSavedMovies={true}
+          />
         }
       </main>
       <Footer />

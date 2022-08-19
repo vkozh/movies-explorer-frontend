@@ -1,9 +1,12 @@
 import React, { useState } from "react"
 import "./Like.css"
 
-export default function Like() {
-  const [like, setLike] = useState(false);
-  const handleLikeClick = () => setLike(!like)
+export default function Like({ handleClick, isSaved }) {
+  const [like, setLike] = useState(isSaved);
+  const handleLikeClick = () => {
+    setLike(!like);
+    handleClick(!like);
+  }
 
   return (
     <svg

@@ -1,8 +1,10 @@
 import React from "react"
 import "./Remove.css"
 
-export default function Remove() {
-  const handleRemove = () => { }
+export default function Remove({ handleClick }) {
+  const handleRemove = () => {
+    handleClick(false)
+  }
   return (
     <svg
       onClick={handleRemove}
