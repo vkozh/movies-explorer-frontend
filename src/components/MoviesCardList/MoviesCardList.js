@@ -6,7 +6,8 @@ import "./MoviesCardList.css"
 
 export default function MoviesCardList({
   isSavedMovies = false,
-  movies
+  foundMovies,
+  setFoundMovies
 }) {
 
   const screenWidth = useWindowWidth();
@@ -19,8 +20,8 @@ export default function MoviesCardList({
   const loadMoreMovies = () => setRenderedMoviesCount(renderedMoviesCount + moreMoviesCount)
 
   const handleLike = (isLike, movie) => {
+
     if (isLike) {
-      movie['isSaved'] = true;
       moviesApi
         .saveMovie(movie)
         .then(movie => console.log(movie))
@@ -28,30 +29,35 @@ export default function MoviesCardList({
     }
     else
       moviesApi
-        .removeMovie(movie.movieId)
-        .then(movie => console.log(movie))
+        .removeMovie(movie._id)
+        .then(m => {
+          setFoundMovies(foundMovies.filter(fm => fm._id !== m._id))
+        })
         .catch(error => console.log(error))
   }
 
   useEffect(() => {
-    setIsCanLoadMore(movies.length > 0 && movies.length > renderedMoviesCount ? true : false);
-  }, [renderedMoviesCount, movies])
+    setIsCanLoadMore(foundMovies.length > 0
+      && foundMovies.length > renderedMoviesCount
+      ? true
+      : false);
+  }, [renderedMoviesCount, foundMovies])
 
   return (
     <div className="section section__movies-list">
       {
-        movies.length > 0
-          ? <div className="movies-list__container">{
+        foundMovies.length > 0
+          ? <div className="movies-list__container">
 
-            movies.slice(0, renderedMoviesCount).map((movie) =>
+            {foundMovies.slice(0, renderedMoviesCount).map((movie) =>
               <MoviesCard
                 key={movie.movieId}
                 isSavedMovies={isSavedMovies}
                 movie={movie}
                 handleLike={handleLike}
-              />)
+              />)}
 
-          }</div>
+          </div>
           : <p className="movies-list__message">Ничего не найдено.</p>
       }
       {isCanLoadMore &&

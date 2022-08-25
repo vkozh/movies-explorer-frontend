@@ -6,11 +6,11 @@ class MainApi extends Api {
   }
 
   register(body) {
-    return super._fetch('/signup', 'POST', body)
+    return super._fetch('/signup', 'POST', {}, body)
   }
 
   login(body) {
-    return super._fetch('/signin', 'POST', body)
+    return super._fetch('/signin', 'POST', {}, body)
   }
 
   logout() {
@@ -18,11 +18,11 @@ class MainApi extends Api {
   }
 
   updateProfile(body) {
-    return super._fetch('/users/me', 'PATCH', body)
+    return super._fetch('/users/me', 'PATCH', {}, body)
   }
 
   getUser() {
-    return super._fetch('/users/me', 'GET')
+    return super._fetch('/users/me', 'GET', { 'Cache-Control': 'public, max-age=0' })
   }
 
 }

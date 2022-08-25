@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Navigate } from 'react-router'
 import WithAuthorized from '../WithAuthorized/WithAuthorized'
 
@@ -11,6 +11,6 @@ export default function ProtectedRoute({
   let ComponentWithAuth = WithAuthorized(isLoggedIn, Component, Navigate)
 
   return (
-    <ComponentWithAuth to="/signin" {...props} />
+    <ComponentWithAuth to="/" {...props} />
   )
 }

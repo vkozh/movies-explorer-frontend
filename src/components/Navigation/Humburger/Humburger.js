@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import AuthMenuItems from "../Menu/AuthMenuItems/AuthMenuItems"
+import AuthMenuItems from "../Menu/MenuAuth/AuthMenuItems/AuthMenuItems"
 import "./Humburger.css"
 
 export default function Humburger() {

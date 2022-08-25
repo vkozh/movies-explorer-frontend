@@ -4,22 +4,16 @@ import SearchForm from "../SearchForm/SearchForm"
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import Preloader from "../../vendor/Preloader/Preloader"
-import { moviesApi } from "../../utils/MoviesApi";
 
-export default function SavedMovies() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [movies, setMovies] = useState([]);
+export default function SavedMovies({
+  isLoading, movies
+}) {
+
+  const pageTitle = "savedMovies"
   const [foundMovies, setFoundMovies] = useState([]);
 
-
   useEffect(() => {
-    moviesApi
-      .getMovies(setIsLoading)
-      .then(data => {
-        setMovies(data)
-        setFoundMovies(data);
-      })
-      .catch();
+    setFoundMovies(JSON.parse(localStorage.getItem(`${pageTitle}-searchResult`)) || {})
   }, [])
 
   return (
@@ -28,15 +22,16 @@ export default function SavedMovies() {
       <main className="main">
         <SearchForm
           movies={movies}
-          foundMovies={foundMovies}
           setFoundMovies={setFoundMovies}
+          fromPage={pageTitle}
         />
 
         {isLoading
           ? <Preloader />
           : <MoviesCardList
-            movies={foundMovies}
+            foundMovies={foundMovies}
             isSavedMovies={true}
+            setFoundMovies={setFoundMovies}
           />
         }
       </main>

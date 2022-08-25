@@ -1,19 +1,17 @@
-import React, { useEffect, useState } from "react"
+import React from "react"
 import "./FilterCheckbox.css"
 
-export default function FilterCheckbox({ setIsShortMovies }) {
-  const [checked, setChecked] = useState(false);
+export default function FilterCheckbox({ isShortMovies, setIsShortMovies, fromPage }) {
+
   const handleChange = () => {
-    setChecked(!checked)
-    setIsShortMovies(!checked);
+    setIsShortMovies(!isShortMovies);
+    localStorage.setItem(`${fromPage}-isShortMovies`, !isShortMovies);
   }
-  // useEffect(() => {
-  //   console.log(checked)
-  // }, [checked])
+
   return (
     <div className="checkbox-bar">
       <input
-        defaultChecked={checked}
+        checked={isShortMovies}
         onChange={handleChange}
         id="checkbox-short-movie"
         type="checkbox"

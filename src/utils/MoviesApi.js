@@ -6,23 +6,16 @@ class MoviesApi extends Api {
   }
 
   getMovies(setIsLoading) {
-    return super._fetch('/', "GET", null, setIsLoading)
+    return super._fetch('/', "GET", {}, null, setIsLoading)
   }
 
-  // getSavedMovies(setIsLoading) {
-  //   return super._fetch('/', "GET", null, setIsLoading)
-  // }
-
   saveMovie(body) {
-    return super._fetch('/', "POST", body)
+    return super._fetch('/', "POST", {}, body)
   }
 
   removeMovie(id) {
     return super._fetch(`/${id}`, "DELETE")
   }
-
-
-
 }
 
 export const moviesApi = new MoviesApi({

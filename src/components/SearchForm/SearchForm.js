@@ -1,34 +1,43 @@
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import FilterCheckbox from "./FilterCheckbox/FilterCheckbox"
 import "./SearchForm.css"
 
-export default function SearchForm({ movies, setFoundMovies }) {
+export default function SearchForm({ movies, setFoundMovies, fromPage }) {
   const [inputValue, setInputValue] = useState('');
   const [isShortMovies, setIsShortMovies] = useState(false);
   const handleChangeInput = (e) => setInputValue(e.target.value);
 
-  const findMovies = (movie) => movie.nameRU.toLowerCase().includes(inputValue.toLowerCase())
+  const handleSearch = useCallback(() => {
 
-  const findMoviesAndShort = () =>
-    movies.filter(movie =>
-      isShortMovies
-        ? findMovies(movie) && movie.duration <= 40
-        : findMovies(movie)
-    )
+    const findMovies = (movie) =>
+      movie.nameRU.toLowerCase().includes(inputValue.toLowerCase())
 
-  const handleSearch = () => {
-    setFoundMovies(findMoviesAndShort());
-  }
+    const findMoviesAndShort = () =>
+      movies.filter(movie =>
+        isShortMovies
+          ? findMovies(movie) && movie.duration <= 40
+          : findMovies(movie)
+      )
+
+    const foundMovies = findMoviesAndShort();
+    setFoundMovies(foundMovies);
+
+    localStorage.setItem(`${fromPage}-searchResult`, JSON.stringify(foundMovies));
+    localStorage.setItem(`${fromPage}-keyWord`, inputValue);
+
+  }, [movies, inputValue, isShortMovies, setFoundMovies, fromPage])
+
 
   useEffect(() => {
-    setFoundMovies(findMoviesAndShort());
-  }, [isShortMovies])
+    setInputValue(localStorage.getItem(`${fromPage}-keyWord`))
+    setIsShortMovies(!!localStorage.getItem(`${fromPage}-isShortMovies`))
+  }, [])
 
   return (
     <div className="section search-form">
       <div className="search-form__input-bar input-bar">
         <input
-          value={inputValue}
+          value={inputValue || ''}
           onChange={handleChangeInput}
           type="text"
           placeholder="Фильм"
@@ -43,7 +52,11 @@ export default function SearchForm({ movies, setFoundMovies }) {
       </div>
 
       <FilterCheckbox
-        setIsShortMovies={setIsShortMovies} />
+        setIsShortMovies={setIsShortMovies}
+        isShortMovies={isShortMovies}
+        search={handleSearch}
+        fromPage={fromPage}
+      />
     </div>
   )
 }

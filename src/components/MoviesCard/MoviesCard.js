@@ -5,7 +5,6 @@ import Remove from "./Remove/Remove"
 
 export default function MoviesCard({ isSavedMovies, movie, handleLike }) {
   const { nameRU, duration, image, trailerLink, isSaved = false } = movie;
-  // const coverImage = `https://api.nomoreparties.co${image}`;
 
   function convertDuration(duration) {
     const hours = Math.floor(duration / 60);

@@ -8,7 +8,9 @@ import Input from "../Input/Input";
 export default function Profile({ logout, editProfile }) {
   const currentUser = useContext(CurrentUserContext)
   const [isEdit, setIsEdit] = useState(false);
+
   const handleLogout = () => logout();
+
   const handleEditProfile = () => {
     setIsEdit(true)
     editProfile(currentUser);
@@ -63,7 +65,7 @@ export default function Profile({ logout, editProfile }) {
           <div className="profile__footer">
             <button
               className="profile__footer-button"
-              onClick={handleLogout} >
+              onClick={logout} >
               Выйти из аккаунта
             </button>
           </div>

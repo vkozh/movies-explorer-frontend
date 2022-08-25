@@ -7,14 +7,19 @@ import Register from "../Register/Register";
 import NotFound from "../NotFound/NotFound"
 import Login from "../Login/Login";
 import SavedMovies from "../SavedMovies/SavedMovies";
-import { CurrentUserContext } from "../../contexts/CurrentUserContext"
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
 import mainApi from "../../utils/MainApi";
+import { CurrentUserContext } from "../../contexts/CurrentUserContext"
+import { beatfilmMoviesApi, moviesApi } from "../../utils/MoviesApi";
+import { checkIsSaved, formatMovies } from "../../utils/utils";
 
 function App() {
 
   const [isLoggedIn, setIsloggedIn] = useState(null);
-  const [currentUser, setCurrentUser] = useState({})
+  const [currentUser, setCurrentUser] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [movies, setMovies] = useState([]);
+  const [savedMovies, setSavedMovies] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -27,7 +32,12 @@ function App() {
           setCurrentUser(user);
           navigate(location.pathname);
         }
-        else setIsloggedIn(false)
+        else {
+          setIsloggedIn(false)
+          setCurrentUser({});
+          localStorage.clear();
+          navigate('/')
+        }
       })
       .catch(error => console.error(error))
   }
@@ -35,8 +45,9 @@ function App() {
   const handleSignin = (data) => {
     mainApi
       .login(data)
-      .then(_ => {
-        tokenCheck();
+      .then(user => {
+        setIsloggedIn(true)
+        setCurrentUser(user);
         navigate('/movies', { replace: true })
       })
       .catch(error => console.error(error))
@@ -54,11 +65,9 @@ function App() {
   const handleLogout = () => {
     mainApi
       .logout()
-      .then(res => {
-        console.log(res)
+      .then(_ => {
         tokenCheck();
-        setCurrentUser({});
-        navigate("/signin", { replace: true })
+        navigate("/", { replace: true })
       })
       .catch(error => console.error(error))
   }
@@ -74,6 +83,21 @@ function App() {
 
   useEffect(() => {
     tokenCheck();
+
+    const beatsMovieFetch = beatfilmMoviesApi.getMovies(setIsLoading);
+    const moviesFetch = moviesApi.getMovies(setIsLoading);
+
+    Promise
+      .all([beatsMovieFetch, moviesFetch])
+      .then(data => {
+        const formattedMovies = formatMovies(data[0]);
+        const savedMovies = data[1];
+        const checkedMovies = checkIsSaved(formattedMovies, savedMovies);
+
+        setMovies(checkedMovies);
+        setSavedMovies(savedMovies);
+      })
+      .catch(error => console.log(error));
   }, [])
 
   return (
@@ -86,7 +110,10 @@ function App() {
             element={
               <ProtectedRoute
                 isLoggedIn={isLoggedIn}
-                component={Movies} />
+                component={Movies}
+                movies={movies}
+                isLoading={isLoading}
+              />
             } />
 
           <Route
@@ -94,7 +121,10 @@ function App() {
             element={
               <ProtectedRoute
                 isLoggedIn={isLoggedIn}
-                component={SavedMovies} />
+                component={SavedMovies}
+                isLoading={isLoading}
+                movies={savedMovies}
+              />
             } />
 
           <Route
