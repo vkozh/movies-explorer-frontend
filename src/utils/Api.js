@@ -20,11 +20,10 @@ class Api {
 
   _checkResponse(res) {
     if (res.ok) return res.json();
-    let status = res.status;
     return res.json().then((data) => {
-      const error = new Error(Object.values(data));
-      error.code = status;
-      throw error;
+      const validationError = Object.values(data)[3].body.message;
+      validationError && console.log(validationError)
+      throw new Error(data.error)
     });
   }
 

@@ -5,19 +5,16 @@ import { CurrentUserContext } from "../../contexts/CurrentUserContext"
 import Form from "../Form/Form";
 import Input from "../Input/Input";
 
-export default function Profile({ logout, editProfile }) {
+export default function Profile({ logout, editProfile, setCurrentUser }) {
   const currentUser = useContext(CurrentUserContext)
   const [isEdit, setIsEdit] = useState(false);
 
-  const handleLogout = () => logout();
+  const handleEditProfile = () => setIsEdit(true)
 
-  const handleEditProfile = () => {
-    setIsEdit(true)
-    editProfile(currentUser);
-  }
-
-  const handleSaveProfile = () => {
+  const handleSaveProfile = (newUserData) => {
     setIsEdit(false)
+    editProfile({ ...currentUser, ...newUserData });
+    setCurrentUser({ ...currentUser, ...newUserData })
   }
 
   return (
@@ -36,25 +33,27 @@ export default function Profile({ logout, editProfile }) {
               onSubmit={isEdit ? handleSaveProfile : handleEditProfile}
               theme="profile"
             >
-              {({ onChangeInput, inputsData }) =>
+              {({ handleChange, values, errors }) =>
                 <>
                   <Input
-                    value={isEdit ? inputsData.name : inputsData.name || currentUser.name}
+                    value={isEdit ? values.name || currentUser.name : currentUser.name}
                     name="name"
                     title="Имя"
-                    onChange={onChangeInput}
+                    onChange={handleChange}
                     minLength="2"
                     maxLength="30"
                     disabled={!isEdit}
+                    error={errors.name}
                   />
 
                   <Input
-                    value={isEdit ? inputsData.email : inputsData.email || currentUser.email}
+                    value={isEdit ? values.email || currentUser.email : currentUser.email}
                     name="email"
                     title="E-mail"
                     type="email"
                     disabled={!isEdit}
-                    onChange={onChangeInput}
+                    onChange={handleChange}
+                    error={errors.email}
                   />
                 </>
               }

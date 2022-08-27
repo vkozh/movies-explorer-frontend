@@ -1,11 +1,13 @@
 import React from "react"
 import "./FilterCheckbox.css"
 
-export default function FilterCheckbox({ isShortMovies, setIsShortMovies, fromPage }) {
+export default function FilterCheckbox({ isShortMovies, setIsShortMovies, page }) {
 
-  const handleChange = () => {
-    setIsShortMovies(!isShortMovies);
-    localStorage.setItem(`${fromPage}-isShortMovies`, !isShortMovies);
+  const handleChange = (e) => {
+    const isChecked = e.target.checked
+
+    setIsShortMovies(isChecked);
+    localStorage.setItem(`${page}-isShortMovies`, isChecked);
   }
 
   return (

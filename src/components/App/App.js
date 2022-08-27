@@ -12,6 +12,7 @@ import mainApi from "../../utils/MainApi";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext"
 import { beatfilmMoviesApi, moviesApi } from "../../utils/MoviesApi";
 import { checkIsSaved, formatMovies } from "../../utils/utils";
+import ErrorPopup from "../ErrorPopup/ErrorPopup";
 
 function App() {
 
@@ -20,8 +21,15 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [movies, setMovies] = useState([]);
   const [savedMovies, setSavedMovies] = useState([]);
+  const [isShowError, setIsShowError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
   const navigate = useNavigate();
   const location = useLocation();
+
+  const showError = (error) => {
+    setErrorMessage(error.message)
+    setIsShowError(true)
+  }
 
   const tokenCheck = () => {
     mainApi
@@ -39,7 +47,7 @@ function App() {
           navigate('/')
         }
       })
-      .catch(error => console.error(error))
+      .catch(showError)
   }
 
   const handleSignin = (data) => {
@@ -50,7 +58,7 @@ function App() {
         setCurrentUser(user);
         navigate('/movies', { replace: true })
       })
-      .catch(error => console.error(error))
+      .catch(showError)
   }
 
   const handleSignup = (data) => {
@@ -59,7 +67,7 @@ function App() {
       .then(_ => {
         navigate('/signin', { replace: true })
       })
-      .catch(error => console.error(error))
+      .catch(showError)
   }
 
   const handleLogout = () => {
@@ -69,16 +77,16 @@ function App() {
         tokenCheck();
         navigate("/", { replace: true })
       })
-      .catch(error => console.error(error))
+      .catch(showError)
   }
 
   const handleEditProfile = (data) => {
     mainApi
-      .editProfile(data)
-      .then((name, email) => {
-        setCurrentUser({ name, email })
+      .updateProfile(data)
+      .then(({ ...userData }) => {
+        setCurrentUser({ ...userData })
       })
-      .catch(error => console.error(error))
+      .catch(showError)
   }
 
   useEffect(() => {
@@ -97,72 +105,84 @@ function App() {
         setMovies(checkedMovies);
         setSavedMovies(savedMovies);
       })
-      .catch(error => console.log(error));
+      .catch(showError);
   }, [])
 
   return (
-    <CurrentUserContext.Provider value={currentUser}>
-      <div className="page">
-        <Routes>
+    <>
+      <CurrentUserContext.Provider value={currentUser}>
+        <div className="page">
+          <Routes>
 
-          <Route
-            path="/movies"
-            element={
-              <ProtectedRoute
-                isLoggedIn={isLoggedIn}
-                component={Movies}
-                movies={movies}
-                isLoading={isLoading}
-              />
-            } />
+            <Route
+              path="/movies"
+              element={
+                <ProtectedRoute
+                  isLoggedIn={isLoggedIn}
+                  component={Movies}
+                  movies={movies}
+                  isLoading={isLoading}
+                  showError={showError}
+                />
+              } />
 
-          <Route
-            path="/saved-movies"
-            element={
-              <ProtectedRoute
-                isLoggedIn={isLoggedIn}
-                component={SavedMovies}
-                isLoading={isLoading}
-                movies={savedMovies}
-              />
-            } />
+            <Route
+              path="/saved-movies"
+              element={
+                <ProtectedRoute
+                  isLoggedIn={isLoggedIn}
+                  component={SavedMovies}
+                  isLoading={isLoading}
+                  movies={savedMovies}
+                  showError={showError}
+                />
+              } />
 
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute
-                isLoggedIn={isLoggedIn}
-                component={Profile}
-                logout={handleLogout}
-                editProfile={handleEditProfile}
-              />
-            } />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute
+                  isLoggedIn={isLoggedIn}
+                  component={Profile}
+                  logout={handleLogout}
+                  editProfile={handleEditProfile}
+                  setCurrentUser={setCurrentUser}
+                />
+              } />
 
-          <Route
-            path="/signin"
-            element={
-              <Login signin={handleSignin} />
-            } />
+            <Route
+              path="/signin"
+              element={
+                <Login signin={handleSignin} />
+              } />
 
-          <Route
-            path="/signup"
-            element={
-              <Register signup={handleSignup} />
-            } />
+            <Route
+              path="/signup"
+              element={
+                <Register signup={handleSignup} />
+              } />
 
-          <Route
-            path="/"
-            exact
-            element={
-              <Main isLoggedIn={isLoggedIn} />
-            } />
+            <Route
+              path="/"
+              exact
+              element={
+                <Main isLoggedIn={isLoggedIn} />
+              } />
 
-          <Route
-            path="*"
-            element={<NotFound />} />
-        </Routes>
-      </div>
-    </CurrentUserContext.Provider>
+            <Route
+              path="*"
+              element={<NotFound />} />
+
+          </Routes>
+        </div>
+      </CurrentUserContext.Provider>
+      {isShowError &&
+        <ErrorPopup
+          message={errorMessage}
+          setErrorMessage={setErrorMessage}
+          setIsShowError={setIsShowError} />
+      }
+    </>
   );
 }
 

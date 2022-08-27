@@ -3,7 +3,6 @@ import { Navigate } from 'react-router'
 import WithAuthorized from '../WithAuthorized/WithAuthorized'
 
 export default function ProtectedRoute({
-  isLoadUserData,
   isLoggedIn,
   component: Component,
   ...props }) {

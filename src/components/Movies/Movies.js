@@ -6,7 +6,7 @@ import Footer from "../Footer/Footer";
 import Preloader from "../../vendor/Preloader/Preloader"
 
 export default function Movies({
-  movies, isLoading,
+  movies, isLoading, showError
 }) {
 
   const pageTitle = "movies"
@@ -24,7 +24,7 @@ export default function Movies({
         <SearchForm
           movies={movies}
           setFoundMovies={setFoundMovies}
-          fromPage="movies"
+          page="movies"
         />
 
         {isLoading
@@ -32,6 +32,7 @@ export default function Movies({
           : <MoviesCardList
             foundMovies={foundMovies}
             isSavedMovies={false}
+            showError={showError}
           />
         }
 

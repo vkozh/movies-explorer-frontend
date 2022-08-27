@@ -23,7 +23,7 @@
 
 .form_profile .formInput:last-of-type {
   border: none;
-  padding: 16px 0 0;
+  padding: 16px 0;
 }
 
 .form_profile .formInput__label {
@@ -33,6 +33,15 @@
   color: #000;
   margin: 0;
   padding: 0;
+  flex-grow: 1;
+}
+
+.profile .form_profile .formInput_focused {
+  border-bottom: 1px solid var(--ultra-blue);
+}
+
+.form_profile .formInput:last-of-type.formInput_focused {
+  border-bottom: 1px solid var(--ultra-blue);
 }
 
 .form_profile .formInput__input {
@@ -63,7 +72,7 @@
   }
 
   .form_profile .form__inputs-container {
-    margin-bottom: 210px;
+    margin-bottom: 194px;
   }
 
   .form_profile .form__form {
@@ -85,6 +94,6 @@
   }
 
   .form_profile .form__inputs-container {
-    margin-bottom: 220px;
+    margin-bottom: 204px;
   }
 }

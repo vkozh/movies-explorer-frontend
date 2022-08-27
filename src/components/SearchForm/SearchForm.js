@@ -2,9 +2,10 @@ import React, { useCallback, useEffect, useState } from "react"
 import FilterCheckbox from "./FilterCheckbox/FilterCheckbox"
 import "./SearchForm.css"
 
-export default function SearchForm({ movies, setFoundMovies, fromPage }) {
-  const [inputValue, setInputValue] = useState('');
-  const [isShortMovies, setIsShortMovies] = useState(false);
+export default function SearchForm({ movies, setFoundMovies, page }) {
+  const [inputValue, setInputValue] = useState(localStorage.getItem(`${page}-keyWord`) || '');
+  const [isShortMovies, setIsShortMovies] = useState(localStorage.getItem(`${page}-isShortMovies`) === 'true' || false);
+
   const handleChangeInput = (e) => setInputValue(e.target.value);
 
   const handleSearch = useCallback(() => {
@@ -22,22 +23,20 @@ export default function SearchForm({ movies, setFoundMovies, fromPage }) {
     const foundMovies = findMoviesAndShort();
     setFoundMovies(foundMovies);
 
-    localStorage.setItem(`${fromPage}-searchResult`, JSON.stringify(foundMovies));
-    localStorage.setItem(`${fromPage}-keyWord`, inputValue);
+    localStorage.setItem(`${page}-searchResult`, JSON.stringify(foundMovies));
+    localStorage.setItem(`${page}-keyWord`, inputValue);
 
-  }, [movies, inputValue, isShortMovies, setFoundMovies, fromPage])
-
+  }, [movies, inputValue, isShortMovies, setFoundMovies, page])
 
   useEffect(() => {
-    setInputValue(localStorage.getItem(`${fromPage}-keyWord`))
-    setIsShortMovies(!!localStorage.getItem(`${fromPage}-isShortMovies`))
-  }, [])
+    handleSearch()
+  }, [isShortMovies])
 
   return (
     <div className="section search-form">
       <div className="search-form__input-bar input-bar">
         <input
-          value={inputValue || ''}
+          value={inputValue}
           onChange={handleChangeInput}
           type="text"
           placeholder="Фильм"
@@ -55,7 +54,7 @@ export default function SearchForm({ movies, setFoundMovies, fromPage }) {
         setIsShortMovies={setIsShortMovies}
         isShortMovies={isShortMovies}
         search={handleSearch}
-        fromPage={fromPage}
+        page={page}
       />
     </div>
   )

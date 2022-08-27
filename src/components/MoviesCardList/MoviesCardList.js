@@ -7,7 +7,8 @@ import "./MoviesCardList.css"
 export default function MoviesCardList({
   isSavedMovies = false,
   foundMovies,
-  setFoundMovies
+  setFoundMovies,
+  showError
 }) {
 
   const screenWidth = useWindowWidth();
@@ -24,16 +25,15 @@ export default function MoviesCardList({
     if (isLike) {
       moviesApi
         .saveMovie(movie)
-        .then(movie => console.log(movie))
-        .catch(error => console.log(error))
+        .catch(showError)
     }
     else
       moviesApi
         .removeMovie(movie._id)
-        .then(m => {
-          setFoundMovies(foundMovies.filter(fm => fm._id !== m._id))
+        .then(movie => {
+          setFoundMovies(foundMovies.filter(foundMovie => foundMovie._id !== movie._id))
         })
-        .catch(error => console.log(error))
+        .catch(showError)
   }
 
   useEffect(() => {

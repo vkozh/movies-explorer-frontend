@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { Link } from "react-router-dom";
+import useFormValidation from "../../hooks/useFormValidation";
 import Logo from "../Header/Logo/Logo";
 import "./Form.css"
 import "./Form_profile.css"
@@ -17,14 +18,14 @@ export default function Form({
   theme = ""
 }) {
 
-  const [isValidForm, setIsValidForm] = useState(true);
-  const [inputsData, setInputsData] = useState({});
-  const onChangeInput = (inputData) =>
-    setInputsData({ ...inputsData, ...inputData })
+  const { values, handleChange, errors, isValidForm, resetForm } = useFormValidation();
+
+  useEffect(() => resetForm(), []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(inputsData);
+    onSubmit(values);
+    resetForm();
   }
 
   return (
@@ -33,7 +34,9 @@ export default function Form({
       {showLogo &&
         <div className="form__logo" >
           <Logo />
-        </div>}
+        </div>
+      }
+
       <p className="form__greetings">
         {title}
       </p>
@@ -45,15 +48,16 @@ export default function Form({
         <div className="form__inputs-container">
 
           {children({
-            inputsData,
-            onChangeInput
+            values,
+            handleChange,
+            errors
           })}
 
         </div>
 
         <button
           className="form__filled-button"
-          disabled={!isValidForm} >
+          disabled={theme && textButton === 'Редактировать' ? false : !isValidForm} >
           {textButton}
         </button>
       </form>
