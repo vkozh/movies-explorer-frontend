@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Main from "../Main/Main";
 import Movies from "../Movies/Movies";
@@ -16,7 +16,7 @@ import ErrorPopup from "../ErrorPopup/ErrorPopup";
 
 function App() {
 
-  const [isLoggedIn, setIsloggedIn] = useState(null);
+  const [isLoggedIn, setIsloggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [movies, setMovies] = useState([]);
@@ -28,7 +28,19 @@ function App() {
 
   const showError = (error) => {
     setErrorMessage(error.message)
-    setIsShowError(true)
+    location.pathname !== '/' && setIsShowError(true)
+  }
+
+  const setVisitData = (user) => {
+    setIsloggedIn(true)
+    setCurrentUser(user);
+  }
+
+  const clearVisitData = () => {
+    setIsloggedIn(false)
+    setCurrentUser({});
+    localStorage.clear();
+    navigate("/", { replace: true })
   }
 
   const tokenCheck = () => {
@@ -36,15 +48,11 @@ function App() {
       .getUser()
       .then(user => {
         if (user) {
-          setIsloggedIn(true)
-          setCurrentUser(user);
+          setVisitData(user)
           navigate(location.pathname);
         }
         else {
-          setIsloggedIn(false)
-          setCurrentUser({});
-          localStorage.clear();
-          navigate('/')
+          clearVisitData();
         }
       })
       .catch(showError)
@@ -54,8 +62,7 @@ function App() {
     mainApi
       .login(data)
       .then(user => {
-        setIsloggedIn(true)
-        setCurrentUser(user);
+        setVisitData(user)
         navigate('/movies', { replace: true })
       })
       .catch(showError)
@@ -74,8 +81,7 @@ function App() {
     mainApi
       .logout()
       .then(_ => {
-        tokenCheck();
-        navigate("/", { replace: true })
+        clearVisitData();
       })
       .catch(showError)
   }
@@ -89,23 +95,30 @@ function App() {
       .catch(showError)
   }
 
-  useEffect(() => {
-    tokenCheck();
-
+  const loadMovies = useCallback(() => {
     const beatsMovieFetch = beatfilmMoviesApi.getMovies(setIsLoading);
     const moviesFetch = moviesApi.getMovies(setIsLoading);
 
-    Promise
-      .all([beatsMovieFetch, moviesFetch])
-      .then(data => {
-        const formattedMovies = formatMovies(data[0]);
-        const savedMovies = data[1];
-        const checkedMovies = checkIsSaved(formattedMovies, savedMovies);
+    isLoggedIn &&
+      Promise
+        .all([beatsMovieFetch, moviesFetch])
+        .then(data => {
+          const formattedMovies = formatMovies(data[0]);
+          const savedMovies = data[1] || {};
+          const checkedMovies = checkIsSaved(formattedMovies, savedMovies);
 
-        setMovies(checkedMovies);
-        setSavedMovies(savedMovies);
-      })
-      .catch(showError);
+          setMovies(checkedMovies);
+          setSavedMovies(savedMovies);
+        })
+        .catch(showError);
+  }, [isLoggedIn, savedMovies, showError])
+
+  useEffect(() => {
+    loadMovies();
+  }, [isLoggedIn])
+
+  useEffect(() => {
+    tokenCheck();
   }, [])
 
   return (

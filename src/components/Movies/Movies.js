@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import Header from "../Header/Header"
 import MoviesCardList from "../MoviesCardList/MoviesCardList"
 import SearchForm from "../SearchForm/SearchForm"
@@ -10,11 +10,10 @@ export default function Movies({
 }) {
 
   const pageTitle = "movies"
-  const [foundMovies, setFoundMovies] = useState([]);
-
-  useEffect(() => {
-    setFoundMovies(JSON.parse(localStorage.getItem(`${pageTitle}-searchResult`)) || {})
-  }, [])
+  const [foundMovies, setFoundMovies] = useState(
+    JSON.parse(localStorage.getItem(`${pageTitle}-searchResult`))
+    || movies
+  );
 
   return (
     <>
@@ -24,7 +23,7 @@ export default function Movies({
         <SearchForm
           movies={movies}
           setFoundMovies={setFoundMovies}
-          page="movies"
+          page={pageTitle}
         />
 
         {isLoading
@@ -33,6 +32,8 @@ export default function Movies({
             foundMovies={foundMovies}
             isSavedMovies={false}
             showError={showError}
+            setFoundMovies={setFoundMovies}
+            page={pageTitle}
           />
         }
 

@@ -14,7 +14,7 @@ class MainApi extends Api {
   }
 
   logout() {
-    return super._fetch('/signout', 'POST')
+    return super._fetch('/signout', 'POST', {}, {})
   }
 
   updateProfile(body) {
@@ -22,7 +22,7 @@ class MainApi extends Api {
   }
 
   getUser() {
-    return super._fetch('/users/me', 'GET', { 'Cache-Control': 'public, max-age=0' })
+    return super._fetch('/users/me', 'GET')//, { 'Cache-Control': 'public, max-age=0' })
   }
 
 }

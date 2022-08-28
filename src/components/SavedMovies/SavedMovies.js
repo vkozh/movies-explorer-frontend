@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import MoviesCardList from "../MoviesCardList/MoviesCardList"
 import SearchForm from "../SearchForm/SearchForm"
 import Header from "../Header/Header";
@@ -10,18 +10,21 @@ export default function SavedMovies({
 }) {
 
   const pageTitle = "savedMovies"
-  const [foundMovies, setFoundMovies] = useState([]);
+  const [foundMovies, setFoundMovies] = useState(
+    JSON.parse(localStorage.getItem(`movies-searchResult`)).filter(m => m.isSaved)
+    || movies
+  );
 
-  useEffect(() => {
-    setFoundMovies(JSON.parse(localStorage.getItem(`${pageTitle}-searchResult`)) || {})
-  }, [])
+  // useEffect(() => {
+  //   localStorage.setItem(`${pageTitle}-searchResult`, JSON.stringify(foundMovies))
+  // }, [foundMovies])
 
   return (
     <>
       <Header isLoggedIn={true} />
       <main className="main">
         <SearchForm
-          movies={movies}
+          movies={foundMovies}
           setFoundMovies={setFoundMovies}
           page={pageTitle}
         />
@@ -30,9 +33,10 @@ export default function SavedMovies({
           ? <Preloader />
           : <MoviesCardList
             foundMovies={foundMovies}
-            isSavedMovies={true}
+            isSavedMoviesPage={true}
             setFoundMovies={setFoundMovies}
             showError={showError}
+            page={pageTitle}
           />
         }
       </main>

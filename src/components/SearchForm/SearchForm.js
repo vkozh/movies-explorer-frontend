@@ -23,9 +23,8 @@ export default function SearchForm({ movies, setFoundMovies, page }) {
     const foundMovies = findMoviesAndShort();
     setFoundMovies(foundMovies);
 
-    localStorage.setItem(`${page}-searchResult`, JSON.stringify(foundMovies));
     localStorage.setItem(`${page}-keyWord`, inputValue);
-
+    localStorage.setItem(`${page}-searchResult`, JSON.stringify(movies));
   }, [movies, inputValue, isShortMovies, setFoundMovies, page])
 
   useEffect(() => {

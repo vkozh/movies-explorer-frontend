@@ -2,6 +2,7 @@
   width: 24px;
   cursor: pointer;
   height: 24px;
+  flex-shrink: 0;
 }
 
 .like:hover {

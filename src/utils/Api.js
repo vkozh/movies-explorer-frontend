@@ -21,7 +21,7 @@ class Api {
   _checkResponse(res) {
     if (res.ok) return res.json();
     return res.json().then((data) => {
-      const validationError = Object.values(data)[3].body.message;
+      const validationError = Object.values(data)[3]?.body?.message;
       validationError && console.log(validationError)
       throw new Error(data.error)
     });

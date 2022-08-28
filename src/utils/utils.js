@@ -11,7 +11,6 @@ export const formatMovies = (movies) => {
       || !trailerLink
       || !regExpIsYoutubeLink.test(trailerLink)
       || !nameRU
-      || !nameEN
       || typeof nameRU !== 'string'
       || typeof duration !== 'number'
     ) {
@@ -50,7 +49,19 @@ export const checkIsSaved = (movies, savedMovies) =>
         m.isSaved = true;
         m._id = sm._id
       }
+      else {
+        m.isSaved = false;
+      }
     })
     return m;
   })
 
+export const getDataForBD = ({
+  country, director, duration, year, description, image, trailerLink,
+  nameRU, nameEN, id, thumbnail, movieId
+}) => (
+  {
+    country, director, duration, year, description, image, trailerLink,
+    nameRU, nameEN, id, thumbnail, movieId
+  }
+)

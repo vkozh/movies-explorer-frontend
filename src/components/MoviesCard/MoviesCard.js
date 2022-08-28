@@ -3,7 +3,7 @@ import "./MoviesCard.css"
 import Like from "./Like/Like"
 import Remove from "./Remove/Remove"
 
-export default function MoviesCard({ isSavedMovies, movie, handleLike }) {
+export default function MoviesCard({ isSavedMoviesPage, movie, handleLike }) {
   const { nameRU, duration, image, trailerLink, isSaved = false } = movie;
 
   function convertDuration(duration) {
@@ -24,7 +24,7 @@ export default function MoviesCard({ isSavedMovies, movie, handleLike }) {
 
       <div className="movies-card__info">
         <p className="movies-card__title">{nameRU}</p>
-        {isSavedMovies
+        {isSavedMoviesPage
           ? <Remove handleClick={handleClick} />
           : <Like handleClick={handleClick} isSaved={isSaved} />}
       </div>
