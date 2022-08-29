@@ -15,10 +15,6 @@ export default function SavedMovies({
     || movies
   );
 
-  // useEffect(() => {
-  //   localStorage.setItem(`${pageTitle}-searchResult`, JSON.stringify(foundMovies))
-  // }, [foundMovies])
-
   return (
     <>
       <Header isLoggedIn={true} />
