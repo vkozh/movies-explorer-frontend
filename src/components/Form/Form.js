@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React from "react"
 import { Link } from "react-router-dom";
 import useFormValidation from "../../hooks/useFormValidation";
 import Logo from "../Header/Logo/Logo";
@@ -18,14 +18,11 @@ export default function Form({
   theme = ""
 }) {
 
-  const { values, handleChange, errors, isValidForm, resetForm } = useFormValidation();
-
-  useEffect(() => resetForm(), []);
+  const { values, handleChange, errors, isValidForm } = useFormValidation();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(values);
-    resetForm();
   }
 
   return (

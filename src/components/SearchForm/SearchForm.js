@@ -1,39 +1,50 @@
 import React, { useCallback, useEffect, useState } from "react"
+import { SHORT_MOVIE_DURATION } from "../../utils/constants";
 import FilterCheckbox from "./FilterCheckbox/FilterCheckbox"
 import "./SearchForm.css"
 
-export default function SearchForm({ movies, setFoundMovies, page }) {
+export default function SearchForm({ movies, setSearchedMovies, page }) {
   const [inputValue, setInputValue] = useState(localStorage.getItem(`${page}-keyWord`) || '');
   const [isShortMovies, setIsShortMovies] = useState(localStorage.getItem(`${page}-isShortMovies`) === 'true' || false);
+  const [showError, setShowError] = useState(false)
 
-  const handleChangeInput = (e) => setInputValue(e.target.value);
+  const handleChangeInput = (e) => {
+    setInputValue(e.target.value);
+    if (e.target.value.length > 0) setShowError(false);
+  }
 
-  const handleSearch = useCallback(() => {
+  const handleClick = () => {
+    search();
+    if (!inputValue) setShowError(true);
+  }
+
+  const search = useCallback(() => {
 
     const findMovies = (movie) =>
       movie.nameRU.toLowerCase().includes(inputValue.toLowerCase())
 
     const findMoviesAndShort = () =>
-      movies.filter(movie =>
+      movies && movies.filter(movie =>
         isShortMovies
-          ? findMovies(movie) && movie.duration <= 40
+          ? findMovies(movie) && movie.duration <= SHORT_MOVIE_DURATION
           : findMovies(movie)
       )
 
     const foundMovies = findMoviesAndShort();
-    setFoundMovies(foundMovies);
+    setSearchedMovies(foundMovies);
 
     localStorage.setItem(`${page}-keyWord`, inputValue);
-    localStorage.setItem(`${page}-searchResult`, JSON.stringify(movies));
-  }, [movies, inputValue, isShortMovies, setFoundMovies, page])
+
+  }, [movies, inputValue, isShortMovies, setSearchedMovies, page])
 
   useEffect(() => {
-    handleSearch()
-  }, [isShortMovies])
+    search()
+  }, [isShortMovies, movies])
 
   return (
     <div className="section search-form">
       <div className="search-form__input-bar input-bar">
+        {showError && <p className="input-bar__error">Нужно ввести ключевое слово.</p>}
         <input
           value={inputValue}
           onChange={handleChangeInput}
@@ -44,15 +55,16 @@ export default function SearchForm({ movies, setFoundMovies, page }) {
 
         <button
           className="input-bar__button"
-          onClick={handleSearch}>
+          onClick={handleClick}>
           Поиск
         </button>
+
       </div>
 
       <FilterCheckbox
         setIsShortMovies={setIsShortMovies}
         isShortMovies={isShortMovies}
-        search={handleSearch}
+        search={search}
         page={page}
       />
     </div>

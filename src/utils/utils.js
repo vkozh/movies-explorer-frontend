@@ -11,6 +11,7 @@ export const formatMovies = (movies) => {
       || !trailerLink
       || !regExpIsYoutubeLink.test(trailerLink)
       || !nameRU
+      || !nameEN
       || typeof nameRU !== 'string'
       || typeof duration !== 'number'
     ) {
@@ -28,7 +29,6 @@ export const formatMovies = (movies) => {
     director = director && typeof director === 'string' ? director : '';
     description = description && typeof description === 'string' ? description : '';
     year = year && typeof year === 'string' ? year : '';
-    nameEN = nameEN && typeof nameEN === 'string' ? nameEN : '';
 
     // format values
     let movieId = id;
@@ -44,19 +44,18 @@ export const formatMovies = (movies) => {
 
 export const checkIsSaved = (movies, savedMovies) =>
   movies.map(m => {
+    m.isSaved = false;
+
     savedMovies.forEach(sm => {
-      if (sm.movieId === m.movieId) {
+      if (m.movieId === sm.movieId) {
         m.isSaved = true;
         m._id = sm._id
-      }
-      else {
-        m.isSaved = false;
       }
     })
     return m;
   })
 
-export const getDataForBD = ({
+export const getDataForDB = ({
   country, director, duration, year, description, image, trailerLink,
   nameRU, nameEN, id, thumbnail, movieId
 }) => (
@@ -65,3 +64,33 @@ export const getDataForBD = ({
     nameRU, nameEN, id, thumbnail, movieId
   }
 )
+
+export const fillAllIsSaved = (movies) =>
+  movies.map(m => {
+    m.isSaved = true;
+    return m;
+  })
+
+export const filledLikeMovies = (movies, movie) =>
+  movies.map(m => {
+    if (m.movieId === movie.movieId) {
+      m.isSaved = true;
+      m._id = movie._id
+    }
+    return m
+  })
+
+
+export const removedLikeMovies = (movies, movie) =>
+  movies.map(m => {
+    if (m.movieId === movie.movieId)
+      m.isSaved = false;
+    return m
+  })
+
+
+export const filterMovies = (pageTitle, movies) => {
+  const mIds = JSON.parse(localStorage.getItem(`${pageTitle}-searchResult`));
+  return movies.filter(m => mIds.includes(m.movieId))
+}
+

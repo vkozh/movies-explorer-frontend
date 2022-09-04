@@ -4,7 +4,7 @@ import "./NotFound.css";
 
 export default function NotFound() {
   let navigate = useNavigate();
-  const handleClick = () => navigate(-1);
+  const handleClick = () => navigate(-1, { replace: true });
   return (
     <div className="not-found">
       <div className="not-found__text">

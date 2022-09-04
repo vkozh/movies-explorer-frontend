@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Main from "../Main/Main";
 import Movies from "../Movies/Movies";
@@ -11,12 +11,12 @@ import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
 import mainApi from "../../utils/MainApi";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext"
 import { beatfilmMoviesApi, moviesApi } from "../../utils/MoviesApi";
-import { checkIsSaved, formatMovies } from "../../utils/utils";
+import { checkIsSaved, formatMovies, fillAllIsSaved, saveSavedMoviesLS } from "../../utils/utils";
 import ErrorPopup from "../ErrorPopup/ErrorPopup";
 
 function App() {
 
-  const [isLoggedIn, setIsloggedIn] = useState(false);
+  const [isLoggedIn, setIsloggedIn] = useState(undefined);
   const [currentUser, setCurrentUser] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [movies, setMovies] = useState([]);
@@ -53,6 +53,7 @@ function App() {
         }
         else {
           clearVisitData();
+          navigate('/sigin')
         }
       })
       .catch(showError)
@@ -71,8 +72,9 @@ function App() {
   const handleSignup = (data) => {
     mainApi
       .register(data)
-      .then(_ => {
-        navigate('/signin', { replace: true })
+      .then(user => {
+        setVisitData(user)
+        navigate('/movies', { replace: true })
       })
       .catch(showError)
   }
@@ -95,26 +97,26 @@ function App() {
       .catch(showError)
   }
 
-  const loadMovies = useCallback(() => {
-    const beatsMovieFetch = beatfilmMoviesApi.getMovies(setIsLoading);
-    const moviesFetch = moviesApi.getMovies(setIsLoading);
+  useEffect(() => {
 
-    isLoggedIn &&
+    isLoggedIn === true &&
       Promise
-        .all([beatsMovieFetch, moviesFetch])
+        .all([
+          beatfilmMoviesApi.getMovies(setIsLoading),
+          moviesApi.getMovies(setIsLoading)])
         .then(data => {
           const formattedMovies = formatMovies(data[0]);
-          const savedMovies = data[1] || {};
-          const checkedMovies = checkIsSaved(formattedMovies, savedMovies);
+          const savedMovies = fillAllIsSaved(data[1]) || {};
+          const checkedMovies = checkIsSaved(formattedMovies, savedMovies); // потом убрать
 
           setMovies(checkedMovies);
           setSavedMovies(savedMovies);
+
+          localStorage.setItem(`movies-searchResult`, JSON.stringify(
+            formattedMovies.map(m => m.movieId)))
         })
         .catch(showError);
-  }, [isLoggedIn, savedMovies, showError])
 
-  useEffect(() => {
-    loadMovies();
   }, [isLoggedIn])
 
   useEffect(() => {
@@ -131,11 +133,15 @@ function App() {
               path="/movies"
               element={
                 <ProtectedRoute
-                  isLoggedIn={isLoggedIn}
                   component={Movies}
+                  isLoggedIn={isLoggedIn}
+                  setMovies={setMovies}
                   movies={movies}
                   isLoading={isLoading}
+                  setIsLoading={setIsLoading}
                   showError={showError}
+                  savedMovies={savedMovies}
+                  setSavedMovies={setSavedMovies}
                 />
               } />
 
@@ -143,11 +149,15 @@ function App() {
               path="/saved-movies"
               element={
                 <ProtectedRoute
-                  isLoggedIn={isLoggedIn}
+                  movies={movies}
+                  setMovies={setMovies}
                   component={SavedMovies}
+                  isLoggedIn={isLoggedIn}
                   isLoading={isLoading}
-                  movies={savedMovies}
+                  setIsLoading={setIsLoading}
                   showError={showError}
+                  savedMovies={savedMovies}
+                  setSavedMovies={setSavedMovies}
                 />
               } />
 
@@ -166,13 +176,21 @@ function App() {
             <Route
               path="/signin"
               element={
-                <Login signin={handleSignin} />
+                <ProtectedRoute
+                  component={Login}
+                  isLoggedIn={!isLoggedIn}
+                  signin={handleSignin}
+                />
               } />
 
             <Route
               path="/signup"
               element={
-                <Register signup={handleSignup} />
+                <ProtectedRoute
+                  component={Register}
+                  isLoggedIn={!isLoggedIn}
+                  signup={handleSignup}
+                />
               } />
 
             <Route
@@ -189,11 +207,13 @@ function App() {
           </Routes>
         </div>
       </CurrentUserContext.Provider>
+
       {isShowError &&
         <ErrorPopup
           message={errorMessage}
           setErrorMessage={setErrorMessage}
-          setIsShowError={setIsShowError} />
+          setIsShowError={setIsShowError}
+        />
       }
     </>
   );
