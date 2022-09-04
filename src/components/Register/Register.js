@@ -1,6 +1,7 @@
 import React from "react"
 import Input from "../Input/Input"
 import Form from "../Form/Form"
+import { EMAIL_REGEXP } from "../../utils/constants"
 
 export default function Register({ signup }) {
 
@@ -31,7 +32,7 @@ export default function Register({ signup }) {
             name="email"
             title="E-mail"
             onChange={handleChange}
-            type="email"
+            pattern={EMAIL_REGEXP}
             error={errors.email}
             required
           />

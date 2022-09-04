@@ -1,14 +1,15 @@
 import { React, useState } from "react"
 import "./Input.css"
 
-export default function Input({ value, name, title, type = "text", onChange, error, ...inputProps }) {
+export default function Input({ value, name, title, type = "text", onChange, onBlur, error, ...inputProps }) {
   const inputId = `input-${name}`;
 
   const [isFocus, setIsFocuse] = useState(false)
 
   const handleBlur = (e) => {
-    onChange(e);
+    // onChange(e);
     setIsFocuse(false);
+    onBlur(e);
   }
   const handleFocus = () => setIsFocuse(true)
 

@@ -7,7 +7,8 @@ export default function FilterCheckbox({ isShortMovies, setIsShortMovies, page }
     const isChecked = e.target.checked
 
     setIsShortMovies(isChecked);
-    localStorage.setItem(`${page}-isShortMovies`, isChecked);
+    if (page === 'movies')
+      localStorage.setItem(`${page}-isShortMovies`, isChecked);
   }
 
   return (

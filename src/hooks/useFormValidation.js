@@ -6,11 +6,16 @@ export default function useFormValidation() {
   const [isValidForm, setIsValidForm] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    const errorMessage = e.target.validationMessage;
+    const { name, value, validationMessage } = e.target;
 
     setValues({ ...values, [name]: value });
-    setErrors({ ...errors, [name]: errorMessage });
+    setErrors({ ...errors, [name]: validationMessage });
+    setIsValidForm(e.target.closest('form').checkValidity());
+  }
+
+  const handleBlur = (e) => {
+    const { name, validationMessage } = e.target;
+    setErrors({ ...errors, [name]: validationMessage });
     setIsValidForm(e.target.closest('form').checkValidity());
   }
 
@@ -20,5 +25,5 @@ export default function useFormValidation() {
     setIsValidForm(newIsValid);
   }, [setValues, setErrors, setIsValidForm])
 
-  return { values, handleChange, errors, isValidForm, resetForm }
+  return { setValues, values, handleBlur, handleChange, errors, isValidForm, setIsValidForm }
 }

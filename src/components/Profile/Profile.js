@@ -4,17 +4,17 @@ import Header from "../Header/Header";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext"
 import Form from "../Form/Form";
 import Input from "../Input/Input";
+import { EMAIL_REGEXP } from "../../utils/constants";
 
-export default function Profile({ logout, editProfile, setCurrentUser }) {
+export default function Profile({ logout, editProfile }) {
   const currentUser = useContext(CurrentUserContext)
   const [isEdit, setIsEdit] = useState(false);
 
-  const handleEditProfile = () => setIsEdit(true)
+  const handleEditProfile = () => setIsEdit(true);
 
   const handleSaveProfile = (newUserData) => {
-    setIsEdit(false)
-    editProfile({ ...currentUser, ...newUserData });
-    setCurrentUser({ ...currentUser, ...newUserData })
+    setIsEdit(false);
+    editProfile({ ...currentUser, ...newUserData })
   }
 
   return (
@@ -33,13 +33,14 @@ export default function Profile({ logout, editProfile, setCurrentUser }) {
               onSubmit={isEdit ? handleSaveProfile : handleEditProfile}
               theme="profile"
             >
-              {({ handleChange, values, errors }) =>
+              {({ handleChange, handleBlur, values, errors }) =>
                 <>
                   <Input
                     value={isEdit ? values.name || currentUser.name : currentUser.name}
                     name="name"
                     title="Имя"
                     onChange={handleChange}
+                    onBlur={handleBlur}
                     minLength="2"
                     maxLength="30"
                     disabled={!isEdit}
@@ -50,13 +51,16 @@ export default function Profile({ logout, editProfile, setCurrentUser }) {
                     value={isEdit ? values.email || currentUser.email : currentUser.email}
                     name="email"
                     title="E-mail"
-                    type="email"
                     disabled={!isEdit}
+                    onBlur={handleBlur}
                     onChange={handleChange}
                     error={errors.email}
+                    pattern={EMAIL_REGEXP}
                   />
+
                 </>
               }
+
             </Form>
 
           </div>

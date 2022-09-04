@@ -44,14 +44,12 @@ export default function MoviesCardList({
   }
 
   const removeMovieLocal = (movie) => {
-
     if (isSavedMoviesPage) {
       setSearchedMovies(searchedMovies.filter((sm) => sm.movieId !== movie.movieId))
     }
 
     setSavedMovies(savedMovies.filter(sm => sm.movieId !== movie.movieId))
     setMovies(removedLikeMovies(movies, movie))
-
   }
 
   const handleLike = (isLike, movie) => {

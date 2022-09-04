@@ -57,6 +57,10 @@
   margin: 0;
 }
 
+.form_profile .form__filled-button:disabled {
+  color: var(--middle-gray)
+}
+
 .form_profile .formInput__error {
   width: 100%;
   margin: 0;

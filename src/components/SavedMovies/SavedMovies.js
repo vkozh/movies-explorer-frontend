@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import MoviesCardList from "../MoviesCardList/MoviesCardList"
 import SearchForm from "../SearchForm/SearchForm"
 import Header from "../Header/Header";
@@ -6,7 +6,7 @@ import Footer from "../Footer/Footer";
 import Preloader from "../../vendor/Preloader/Preloader"
 
 export default function SavedMovies({
-  isLoading, savedMovies, showError, setSavedMovies, movies, setMovies
+  isLoading, savedMovies, showError, setSavedMovies, movies, setMovies, loadData
 }) {
 
   const pageTitle = "savedMovies"
@@ -20,6 +20,7 @@ export default function SavedMovies({
           movies={savedMovies}
           setSearchedMovies={setSearchedMovies}
           page={pageTitle}
+          loadData={loadData}
         />
 
         {isLoading

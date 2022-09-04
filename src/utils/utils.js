@@ -2,7 +2,7 @@ export const formatMovies = (movies) => {
 
   //check is critical values
   movies = movies.filter(movie => {
-    const { image, trailerLink, duration, nameRU, nameEN } = movie;
+    const { image, trailerLink, duration, nameRU, nameEN, country } = movie;
     const regExpIsImg = /^\/uploads\/[\d\w]*\.jpeg/
     const regExpIsYoutubeLink = /^[https://]+(www\.youtube\.com\/watch\?v=)?(youtu\.be\/)?[-\d\w]*/
 
@@ -12,6 +12,7 @@ export const formatMovies = (movies) => {
       || !regExpIsYoutubeLink.test(trailerLink)
       || !nameRU
       || !nameEN
+      || !country
       || typeof nameRU !== 'string'
       || typeof duration !== 'number'
     ) {
@@ -25,7 +26,6 @@ export const formatMovies = (movies) => {
       nameRU, nameEN, id, thumbnail } = movie
 
     //check is not critical values
-    country = country && typeof country === 'string' ? country : '';
     director = director && typeof director === 'string' ? director : '';
     description = description && typeof description === 'string' ? description : '';
     year = year && typeof year === 'string' ? year : '';

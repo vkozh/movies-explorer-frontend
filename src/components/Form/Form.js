@@ -1,5 +1,6 @@
-import React from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { Link } from "react-router-dom";
+import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 import useFormValidation from "../../hooks/useFormValidation";
 import Logo from "../Header/Logo/Logo";
 import "./Form.css"
@@ -18,12 +19,25 @@ export default function Form({
   theme = ""
 }) {
 
-  const { values, handleChange, errors, isValidForm } = useFormValidation();
+  const { values, setValues, handleChange, handleBlur, errors, isValidForm, setIsValidForm } = useFormValidation();
+  const currentUser = useContext(CurrentUserContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(values);
   }
+
+  useEffect(() => {
+    if (theme === 'profile')
+      setValues({ name: currentUser.name, email: currentUser.email })
+  }, [])
+
+  useEffect(() => {
+    if (theme === 'profile') {
+      if (values.name === currentUser.name && values.email === currentUser.email)
+        setIsValidForm(false);
+    }
+  }, [values])
 
   return (
     <div className={`form ${theme ? "form_" + theme : ""}`}>
@@ -47,14 +61,17 @@ export default function Form({
           {children({
             values,
             handleChange,
-            errors
+            errors,
+            handleBlur
           })}
 
         </div>
 
         <button
           className="form__filled-button"
-          disabled={theme && textButton === 'Редактировать' ? false : !isValidForm} >
+          type="submit"
+          disabled={theme && textButton === 'Редактировать' ? false : !isValidForm}
+        >
           {textButton}
         </button>
       </form>

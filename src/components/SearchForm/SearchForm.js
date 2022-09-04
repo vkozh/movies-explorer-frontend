@@ -3,7 +3,7 @@ import { SHORT_MOVIE_DURATION } from "../../utils/constants";
 import FilterCheckbox from "./FilterCheckbox/FilterCheckbox"
 import "./SearchForm.css"
 
-export default function SearchForm({ movies, setSearchedMovies, page }) {
+export default function SearchForm({ movies, setSearchedMovies, page, loadData }) {
   const [inputValue, setInputValue] = useState(localStorage.getItem(`${page}-keyWord`) || '');
   const [isShortMovies, setIsShortMovies] = useState(localStorage.getItem(`${page}-isShortMovies`) === 'true' || false);
   const [showError, setShowError] = useState(false)
@@ -13,7 +13,9 @@ export default function SearchForm({ movies, setSearchedMovies, page }) {
     if (e.target.value.length > 0) setShowError(false);
   }
 
-  const handleClick = () => {
+  const handleClick = (e) => {
+    e.preventDefault();
+    loadData();
     search();
     if (!inputValue) setShowError(true);
   }
@@ -33,7 +35,8 @@ export default function SearchForm({ movies, setSearchedMovies, page }) {
     const foundMovies = findMoviesAndShort();
     setSearchedMovies(foundMovies);
 
-    localStorage.setItem(`${page}-keyWord`, inputValue);
+    if (page === 'movies')
+      localStorage.setItem(`${page}-keyWord`, inputValue);
 
   }, [movies, inputValue, isShortMovies, setSearchedMovies, page])
 
@@ -43,7 +46,10 @@ export default function SearchForm({ movies, setSearchedMovies, page }) {
 
   return (
     <div className="section search-form">
-      <div className="search-form__input-bar input-bar">
+      <form
+        className="search-form__input-bar input-bar"
+        onSubmit={handleClick}
+      >
         {showError && <p className="input-bar__error">Нужно ввести ключевое слово.</p>}
         <input
           value={inputValue}
@@ -51,15 +57,15 @@ export default function SearchForm({ movies, setSearchedMovies, page }) {
           type="text"
           placeholder="Фильм"
           className="input-bar__input"
-          required />
+        />
 
         <button
           className="input-bar__button"
-          onClick={handleClick}>
+          type="submit">
           Поиск
         </button>
 
-      </div>
+      </form>
 
       <FilterCheckbox
         setIsShortMovies={setIsShortMovies}

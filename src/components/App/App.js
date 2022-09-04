@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Main from "../Main/Main";
 import Movies from "../Movies/Movies";
@@ -11,7 +11,7 @@ import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
 import mainApi from "../../utils/MainApi";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext"
 import { beatfilmMoviesApi, moviesApi } from "../../utils/MoviesApi";
-import { checkIsSaved, formatMovies, fillAllIsSaved, saveSavedMoviesLS } from "../../utils/utils";
+import { checkIsSaved, formatMovies, fillAllIsSaved } from "../../utils/utils";
 import ErrorPopup from "../ErrorPopup/ErrorPopup";
 
 function App() {
@@ -21,14 +21,15 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [movies, setMovies] = useState([]);
   const [savedMovies, setSavedMovies] = useState([]);
-  const [isShowError, setIsShowError] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('')
+  const [isShowMessage, setIsShowMessage] = useState(false);
+  const [message, setMessage] = useState('');
+  const [isLoadData, setIsLoadData] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
-  const showError = (error) => {
-    setErrorMessage(error.message)
-    location.pathname !== '/' && setIsShowError(true)
+  const showMessage = (message, isError = true) => {
+    setMessage(isError ? message.message : message)
+    location.pathname !== '/' && setIsShowMessage(true)
   }
 
   const setVisitData = (user) => {
@@ -49,14 +50,16 @@ function App() {
       .then(user => {
         if (user) {
           setVisitData(user)
-          navigate(location.pathname);
+          navigate(location.pathname, { replace: true });
         }
         else {
           clearVisitData();
-          navigate('/sigin')
         }
       })
-      .catch(showError)
+      .catch(e => {
+        showMessage(e)
+        navigate('/signin');
+      })
   }
 
   const handleSignin = (data) => {
@@ -66,7 +69,7 @@ function App() {
         setVisitData(user)
         navigate('/movies', { replace: true })
       })
-      .catch(showError)
+      .catch(showMessage)
   }
 
   const handleSignup = (data) => {
@@ -76,7 +79,7 @@ function App() {
         setVisitData(user)
         navigate('/movies', { replace: true })
       })
-      .catch(showError)
+      .catch(showMessage)
   }
 
   const handleLogout = () => {
@@ -85,21 +88,21 @@ function App() {
       .then(_ => {
         clearVisitData();
       })
-      .catch(showError)
+      .catch(showMessage)
   }
 
-  const handleEditProfile = (data) => {
+  const handleEditProfile = async (data) => {
     mainApi
       .updateProfile(data)
       .then(({ ...userData }) => {
-        setCurrentUser({ ...userData })
+        setCurrentUser({ ...userData });
+        showMessage('Сохранено', false);
       })
-      .catch(showError)
+      .catch(showMessage)
   }
 
-  useEffect(() => {
-
-    isLoggedIn === true &&
+  const loadData = () => {
+    isLoggedIn === true && !isLoadData &&
       Promise
         .all([
           beatfilmMoviesApi.getMovies(setIsLoading),
@@ -107,7 +110,7 @@ function App() {
         .then(data => {
           const formattedMovies = formatMovies(data[0]);
           const savedMovies = fillAllIsSaved(data[1]) || {};
-          const checkedMovies = checkIsSaved(formattedMovies, savedMovies); // потом убрать
+          const checkedMovies = checkIsSaved(formattedMovies, savedMovies);
 
           setMovies(checkedMovies);
           setSavedMovies(savedMovies);
@@ -115,9 +118,10 @@ function App() {
           localStorage.setItem(`movies-searchResult`, JSON.stringify(
             formattedMovies.map(m => m.movieId)))
         })
-        .catch(showError);
+        .catch(showMessage);
 
-  }, [isLoggedIn])
+    setIsLoadData(true);
+  };
 
   useEffect(() => {
     tokenCheck();
@@ -139,9 +143,10 @@ function App() {
                   movies={movies}
                   isLoading={isLoading}
                   setIsLoading={setIsLoading}
-                  showError={showError}
+                  showMessage={showMessage}
                   savedMovies={savedMovies}
                   setSavedMovies={setSavedMovies}
+                  loadData={loadData}
                 />
               } />
 
@@ -155,9 +160,10 @@ function App() {
                   isLoggedIn={isLoggedIn}
                   isLoading={isLoading}
                   setIsLoading={setIsLoading}
-                  showError={showError}
+                  showMessage={showMessage}
                   savedMovies={savedMovies}
                   setSavedMovies={setSavedMovies}
+                  loadData={loadData}
                 />
               } />
 
@@ -170,6 +176,7 @@ function App() {
                   logout={handleLogout}
                   editProfile={handleEditProfile}
                   setCurrentUser={setCurrentUser}
+                  setMessage={setMessage}
                 />
               } />
 
@@ -208,11 +215,11 @@ function App() {
         </div>
       </CurrentUserContext.Provider>
 
-      {isShowError &&
+      {isShowMessage &&
         <ErrorPopup
-          message={errorMessage}
-          setErrorMessage={setErrorMessage}
-          setIsShowError={setIsShowError}
+          message={message}
+          setMessage={setMessage}
+          setIsShowMessage={setIsShowMessage}
         />
       }
     </>

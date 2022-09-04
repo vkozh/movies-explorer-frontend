@@ -1,11 +1,11 @@
 import React from 'react'
 import './ErrorPopup.css'
 
-export default function ErrorPopup({ message, setIsShowError, setErrorMessage }) {
+export default function ErrorPopup({ message, setIsShowMessage, setMessage }) {
 
   const handleClose = () => {
-    setIsShowError(false)
-    setErrorMessage('')
+    setIsShowMessage(false)
+    setMessage('')
   }
 
   const handleCloseOnOverlay = (e) => {
@@ -17,7 +17,7 @@ export default function ErrorPopup({ message, setIsShowError, setErrorMessage })
     <div className='errorPopup' onClick={handleCloseOnOverlay}>
       <div className='errorPopup__container'>
         <button className='errorPopup__close' onClick={handleClose} />
-        <p className='errorPopup__title'>Ошибка</p>
+        {message !== 'Сохранено' && <p className='errorPopup__title'>Ошибка</p>}
         <p className='errorPopup__message'>{message}</p>
       </div>
     </div>

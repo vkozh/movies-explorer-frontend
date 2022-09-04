@@ -4,10 +4,10 @@ import MoviesCardList from "../MoviesCardList/MoviesCardList"
 import SearchForm from "../SearchForm/SearchForm"
 import Footer from "../Footer/Footer";
 import Preloader from "../../vendor/Preloader/Preloader"
-import { checkIsSaved, filterMovies } from "../../utils/utils";
+import { filterMovies } from "../../utils/utils";
 
 export default function Movies({
-  movies, isLoading, showError, setIsLoading, savedMovies, setSavedMovies, setMovies
+  movies, isLoading, showError, savedMovies, setSavedMovies, setMovies, loadData
 }) {
 
   const pageTitle = "movies";
@@ -15,7 +15,10 @@ export default function Movies({
   const [searchedMovies, setSearchedMovies] = useState(filterMovies(pageTitle, movies))
 
   useEffect(() => {
-    localStorage.setItem(`${pageTitle}-searchResult`, JSON.stringify(searchedMovies.map(m => m.movieId)))
+    localStorage.setItem(
+      `${pageTitle}-searchResult`,
+      JSON.stringify(searchedMovies.map(m => m.movieId))
+    )
   }, [searchedMovies])
 
   return (
@@ -27,6 +30,7 @@ export default function Movies({
           movies={movies}
           setSearchedMovies={setSearchedMovies}
           page={pageTitle}
+          loadData={loadData}
         />
 
         {isLoading
