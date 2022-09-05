@@ -7,7 +7,6 @@ export default function Input({ value, name, title, type = "text", onChange, onB
   const [isFocus, setIsFocuse] = useState(false)
 
   const handleBlur = (e) => {
-    // onChange(e);
     setIsFocuse(false);
     onBlur(e);
   }

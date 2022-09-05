@@ -78,7 +78,7 @@ export default function MoviesCardList({
   return (
     <div className="section section__movies-list">
       {
-        foundMovies && foundMovies.length > 0
+        searchedMovies && searchedMovies.length > 0
           ? <div className="movies-list__container">
             {searchedMovies.slice(0, renderedMoviesCount).map((movie) =>
               <MoviesCard

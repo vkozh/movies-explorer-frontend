@@ -15,9 +15,12 @@ export default function SearchForm({ movies, setSearchedMovies, page, loadData }
 
   const handleClick = (e) => {
     e.preventDefault();
-    loadData();
-    search();
-    if (!inputValue) setShowError(true);
+    if (!inputValue)
+      setShowError(true);
+    else {
+      loadData();
+      search();
+    }
   }
 
   const search = useCallback(() => {

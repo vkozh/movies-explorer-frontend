@@ -14,12 +14,13 @@ export default function Register({ signup }) {
       linkText="Войти"
       onSubmit={signup}>
 
-      {({ handleChange, values, errors }) =>
+      {({ handleChange, handleBlur, values, errors }) =>
         <>
           <Input
             value={values.name || ""}
             name="name"
             onChange={handleChange}
+            onBlur={handleBlur}
             title="Имя"
             minLength="2"
             maxLength="30"
@@ -32,6 +33,7 @@ export default function Register({ signup }) {
             name="email"
             title="E-mail"
             onChange={handleChange}
+            onBlur={handleBlur}
             pattern={EMAIL_REGEXP}
             error={errors.email}
             required
@@ -42,6 +44,7 @@ export default function Register({ signup }) {
             name="password"
             title="Пароль"
             onChange={handleChange}
+            onBlur={handleBlur}
             type="password"
             error={errors.password}
             minLength="8"

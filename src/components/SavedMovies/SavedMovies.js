@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import MoviesCardList from "../MoviesCardList/MoviesCardList"
 import SearchForm from "../SearchForm/SearchForm"
 import Header from "../Header/Header";
@@ -11,6 +11,10 @@ export default function SavedMovies({
 
   const pageTitle = "savedMovies"
   const [searchedMovies, setSearchedMovies] = useState(movies.filter(m => m.isSaved))
+
+  useEffect(() => {
+    !savedMovies.length && loadData();
+  }, [])
 
   return (
     <>

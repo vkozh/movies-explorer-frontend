@@ -5,7 +5,6 @@ class Api {
   }
 
   _fetch(path, method, headers, bodyObject, renderLoading) {
-    console.log(this._baseUrl, path)
     if (renderLoading) renderLoading(true)
     return fetch(`${this._baseUrl}${path}`, {
       method: method,

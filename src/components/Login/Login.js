@@ -13,7 +13,7 @@ export default function Login({ signin }) {
       linkText="Регистрация"
       onSubmit={signin}
     >
-      {({ handleChange, values, errors }) =>
+      {({ handleChange, handleBlur, values, errors }) =>
         <>
           <Input
             value={values.email || ""}
@@ -21,6 +21,7 @@ export default function Login({ signin }) {
             title="E-mail"
             type="email"
             onChange={handleChange}
+            onBlur={handleBlur}
             required
             error={errors.email}
           />
@@ -31,6 +32,7 @@ export default function Login({ signin }) {
             title="Пароль"
             type="password"
             onChange={handleChange}
+            onBlur={handleBlur}
             required
             error={errors.password}
           />

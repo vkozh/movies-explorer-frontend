@@ -91,6 +91,6 @@ export const removedLikeMovies = (movies, movie) =>
 
 export const filterMovies = (pageTitle, movies) => {
   const mIds = JSON.parse(localStorage.getItem(`${pageTitle}-searchResult`));
-  return movies.filter(m => mIds.includes(m.movieId))
+  return !movies.length ? movies.filter(m => mIds.includes(m.movieId)) : []
 }
 

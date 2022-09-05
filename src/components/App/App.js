@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Main from "../Main/Main";
 import Movies from "../Movies/Movies";
@@ -19,8 +19,9 @@ function App() {
   const [isLoggedIn, setIsloggedIn] = useState(undefined);
   const [currentUser, setCurrentUser] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [movies, setMovies] = useState([]);
-  const [savedMovies, setSavedMovies] = useState([]);
+  const [movies, setMovies] = useState(JSON.parse(localStorage.getItem('movies')) || []);
+  const [savedMovies, setSavedMovies] = useState(
+    JSON.parse(localStorage.getItem('savedMovies')) || []);
   const [isShowMessage, setIsShowMessage] = useState(false);
   const [message, setMessage] = useState('');
   const [isLoadData, setIsLoadData] = useState(false);
@@ -72,12 +73,11 @@ function App() {
       .catch(showMessage)
   }
 
-  const handleSignup = (data) => {
+  const handleSignup = ({ name, email, password }) => {
     mainApi
-      .register(data)
+      .register({ name, email, password })
       .then(user => {
-        setVisitData(user)
-        navigate('/movies', { replace: true })
+        handleSignin({ email, password })
       })
       .catch(showMessage)
   }
@@ -102,7 +102,8 @@ function App() {
   }
 
   const loadData = () => {
-    isLoggedIn === true && !isLoadData &&
+
+    isLoggedIn === true && !isLoadData && !movies.length &&
       Promise
         .all([
           beatfilmMoviesApi.getMovies(setIsLoading),
@@ -115,6 +116,7 @@ function App() {
           setMovies(checkedMovies);
           setSavedMovies(savedMovies);
 
+          localStorage.setItem(`savedMovies`, JSON.stringify(savedMovies));
           localStorage.setItem(`movies-searchResult`, JSON.stringify(
             formattedMovies.map(m => m.movieId)))
         })
@@ -122,6 +124,14 @@ function App() {
 
     setIsLoadData(true);
   };
+
+  useEffect(() => {
+    movies && localStorage.setItem(`movies`, JSON.stringify(movies));
+  }, [movies])
+
+  useEffect(() => {
+    savedMovies && localStorage.setItem(`savedMovies`, JSON.stringify(savedMovies));
+  }, [savedMovies])
 
   useEffect(() => {
     tokenCheck();
