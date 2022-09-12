@@ -1,18 +1,19 @@
-import { React, useEffect, useState } from "react"
+import { React, useState } from "react"
 import "./Input.css"
 
-export default function Input({ value, name, title, type = "text", onChange, ...inputProps }) {
+export default function Input({ value, name, title, type = "text", onChange, onBlur, error, ...inputProps }) {
   const inputId = `input-${name}`;
 
-  const [errorMessage, setErrorMessage] = useState("");
+  const [isFocus, setIsFocuse] = useState(false)
 
-  const handleBlur = (e) => setErrorMessage(e.target.validationMessage);
-  const handleChange = (e) => {
-    onChange({ [name]: e.target.value });
+  const handleBlur = (e) => {
+    setIsFocuse(false);
+    onBlur(e);
   }
+  const handleFocus = () => setIsFocuse(true)
 
   return (
-    <div className="formInput">
+    <div className={`formInput ${isFocus ? 'formInput_focused' : ''}`}>
       <label
         className="formInput__label"
         htmlFor={inputId}>
@@ -26,12 +27,13 @@ export default function Input({ value, name, title, type = "text", onChange, ...
         onBlur={handleBlur}
         name={name}
         value={value}
-        onChange={handleChange}
+        onChange={onChange}
+        onFocus={handleFocus}
         {...inputProps}
       />
 
       <p className="formInput__error">
-        {errorMessage}
+        {error}
       </p>
     </div>
   )

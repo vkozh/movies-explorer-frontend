@@ -5,23 +5,42 @@ import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import Preloader from "../../vendor/Preloader/Preloader"
 
-export default function SavedMovies({ isLoggedIn, isSavedMovies }) {
-  const [isLoading, setIsLoading] = useState(false);
+export default function SavedMovies({
+  isLoading, savedMovies, showError, setSavedMovies, movies, setMovies, loadData
+}) {
+
+  const pageTitle = "savedMovies"
+  const [searchedMovies, setSearchedMovies] = useState(movies.filter(m => m.isSaved))
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(true)
-    }, 2000);
+    !savedMovies.length && loadData();
   }, [])
 
   return (
     <>
-      <Header isLoggedIn={isLoggedIn} />
+      <Header isLoggedIn={true} />
       <main className="main">
-        <SearchForm />
+        <SearchForm
+          movies={savedMovies}
+          setSearchedMovies={setSearchedMovies}
+          page={pageTitle}
+          loadData={loadData}
+        />
+
         {isLoading
-          ? <MoviesCardList isSavedMovies={isSavedMovies} />
-          : <Preloader />
+          ? <Preloader />
+          : <MoviesCardList
+            movies={movies}
+            setMovies={setMovies}
+            foundMovies={searchedMovies}
+            searchedMovies={searchedMovies}
+            setSearchedMovies={setSearchedMovies}
+            isSavedMoviesPage={true}
+            showError={showError}
+            savedMovies={savedMovies}
+            setSavedMovies={setSavedMovies}
+            page={pageTitle}
+          />
         }
       </main>
       <Footer />

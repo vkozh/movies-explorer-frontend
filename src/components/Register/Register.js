@@ -1,49 +1,57 @@
 import React from "react"
 import Input from "../Input/Input"
 import Form from "../Form/Form"
+import { EMAIL_REGEXP } from "../../utils/constants"
 
 export default function Register({ signup }) {
 
   return (
-    <div className="section register">
+    <Form
+      title="Добро пожаловать!"
+      textButton="Зарегистрироваться"
+      question="Уже зарегистрированы?"
+      link="/signin"
+      linkText="Войти"
+      onSubmit={signup}>
 
-      <Form
-        title="Добро пожаловать!"
-        textButton="Зарегистрироваться"
-        question="Уже зарегистрированы?"
-        link="/signin"
-        linkText="Войти"
-        onSubmit={signup}>
+      {({ handleChange, handleBlur, values, errors }) =>
+        <>
+          <Input
+            value={values.name || ""}
+            name="name"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            title="Имя"
+            minLength="2"
+            maxLength="30"
+            error={errors.name}
+            required
+          />
 
-        {({ onChangeInput, inputsData }) =>
-          <>
-            <Input
-              value={inputsData.name || ""}
-              name="name"
-              onChange={onChangeInput}
-              title="Имя"
-              minLength="2"
-              maxLength="30"
-            />
+          <Input
+            value={values.email || ""}
+            name="email"
+            title="E-mail"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            pattern={EMAIL_REGEXP}
+            error={errors.email}
+            required
+          />
 
-            <Input
-              value={inputsData.email || ""}
-              name="email"
-              title="E-mail"
-              onChange={onChangeInput}
-              type="email" />
+          <Input
+            value={values.password || ""}
+            name="password"
+            title="Пароль"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            type="password"
+            error={errors.password}
+            minLength="8"
+            required />
+        </>
+      }
 
-            <Input
-              value={inputsData.password || ""}
-              name="password"
-              title="Пароль"
-              onChange={onChangeInput}
-              type="password" />
-          </>
-        }
-
-      </Form>
-
-    </div>
+    </Form>
   )
 }

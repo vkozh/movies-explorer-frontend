@@ -1,0 +1,47 @@
+.errorPopup {
+  position: fixed;
+  right: 0;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background-color: #00000038;
+  display: flex;
+}
+
+.errorPopup__container {
+  position: relative;
+  margin: auto;
+  width: 300px;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  justify-content: center;
+}
+
+.errorPopup__title {
+  font-family: 'Inter', Arial, Helvetica, sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+  color: var(--blood-red);
+}
+
+.errorPopup__message {
+  font-family: 'Inter', Arial, Helvetica, sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+}
+
+.errorPopup__close {
+  background-image: url(../../images/close.svg);
+  width: 22px;
+  height: 22px;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  position: absolute;
+  border: none;
+  right: 6px;
+  top: 6px;
+}

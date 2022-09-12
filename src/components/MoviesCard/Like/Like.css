@@ -2,6 +2,12 @@
   width: 24px;
   cursor: pointer;
   height: 24px;
+  flex-shrink: 0;
+}
+
+.like:hover {
+  filter: drop-shadow(0 0 2px #a3a3a3);
+  transition: all .3s ease;
 }
 
 .like path {
@@ -17,4 +23,9 @@
 .like_filled path {
   fill: var(--blood-red);
   transition: fill .3s ease;
+}
+
+.like:hover path {
+  fill: var(--blood-red);
+  transition: all .3s ease;
 }

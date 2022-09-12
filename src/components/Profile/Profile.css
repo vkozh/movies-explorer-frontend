@@ -9,10 +9,18 @@
 
 .profile__main {
   display: flex;
+  flex-direction: column;
   margin: 0 12px 0;
   max-width: 410px;
   width: 100%;
   flex-grow: 1;
+}
+
+.profile__message {
+  text-align: center;
+  width: 100%;
+  color: var(--main-green);
+  height: 0;
 }
 
 .profile__info {
@@ -50,7 +58,6 @@
   color: var(--blood-red);
   background-color: #fff;
   border: none;
-
 }
 
 .profile__footer-button:hover {

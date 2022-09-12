@@ -1,6 +1,6 @@
 import React from "react"
 import { Link, NavLink } from "react-router-dom";
-import iconProfile from "../../../../images/account_man.svg"
+import iconProfile from "../../../../../images/account_man.svg"
 import "./AuthMenuItems.css"
 
 export default function AuthMenuItems({ isHumburger = false }) {

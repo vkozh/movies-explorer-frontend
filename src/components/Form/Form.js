@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { Link } from "react-router-dom";
+import { CurrentUserContext } from "../../contexts/CurrentUserContext";
+import useFormValidation from "../../hooks/useFormValidation";
 import Logo from "../Header/Logo/Logo";
 import "./Form.css"
 import "./Form_profile.css"
@@ -17,15 +19,25 @@ export default function Form({
   theme = ""
 }) {
 
-  const [isValidForm, setIsValidForm] = useState(true);
-  const [inputsData, setInputsData] = useState({});
-  const onChangeInput = (inputData) =>
-    setInputsData({ ...inputsData, ...inputData })
+  const { values, setValues, handleChange, handleBlur, errors, isValidForm, setIsValidForm } = useFormValidation();
+  const currentUser = useContext(CurrentUserContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(inputsData);
+    onSubmit(values);
   }
+
+  useEffect(() => {
+    if (theme === 'profile')
+      setValues({ name: currentUser.name, email: currentUser.email })
+  }, [])
+
+  useEffect(() => {
+    if (theme === 'profile') {
+      if (values.name === currentUser.name && values.email === currentUser.email)
+        setIsValidForm(false);
+    }
+  }, [values])
 
   return (
     <div className={`form ${theme ? "form_" + theme : ""}`}>
@@ -33,7 +45,9 @@ export default function Form({
       {showLogo &&
         <div className="form__logo" >
           <Logo />
-        </div>}
+        </div>
+      }
+
       <p className="form__greetings">
         {title}
       </p>
@@ -45,15 +59,19 @@ export default function Form({
         <div className="form__inputs-container">
 
           {children({
-            inputsData,
-            onChangeInput
+            values,
+            handleChange,
+            errors,
+            handleBlur
           })}
 
         </div>
 
         <button
           className="form__filled-button"
-          disabled={!isValidForm} >
+          type="submit"
+          disabled={theme && textButton === 'Редактировать' ? false : !isValidForm}
+        >
           {textButton}
         </button>
       </form>

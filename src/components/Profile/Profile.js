@@ -1,26 +1,25 @@
 import React, { useContext, useState } from "react"
 import "./Profile.css"
 import Header from "../Header/Header";
-import { CurrentUserContext } from "../../utils/contexts/CurrentUserContext"
+import { CurrentUserContext } from "../../contexts/CurrentUserContext"
 import Form from "../Form/Form";
 import Input from "../Input/Input";
+import { EMAIL_REGEXP } from "../../utils/constants";
 
-export default function Profile({ isLoggedIn, logout, editProfile }) {
+export default function Profile({ logout, editProfile }) {
   const currentUser = useContext(CurrentUserContext)
   const [isEdit, setIsEdit] = useState(false);
-  const handleLogout = () => logout();
-  const handleEditProfile = () => {
-    setIsEdit(true)
-    editProfile(currentUser);
-  }
 
-  const handleSaveProfile = () => {
-    setIsEdit(false)
+  const handleEditProfile = () => setIsEdit(true);
+
+  const handleSaveProfile = (newUserData) => {
+    setIsEdit(false);
+    editProfile({ ...currentUser, ...newUserData })
   }
 
   return (
     <>
-      <Header isLoggedIn={isLoggedIn} />
+      <Header isLoggedIn={true} />
 
       <main className="main">
         <div className="section profile">
@@ -34,28 +33,34 @@ export default function Profile({ isLoggedIn, logout, editProfile }) {
               onSubmit={isEdit ? handleSaveProfile : handleEditProfile}
               theme="profile"
             >
-              {({ onChangeInput, inputsData }) =>
+              {({ handleChange, handleBlur, values, errors }) =>
                 <>
                   <Input
-                    value={isEdit ? inputsData.name : inputsData.name || currentUser.name}
+                    value={isEdit ? values.name || currentUser.name : currentUser.name}
                     name="name"
                     title="Имя"
-                    onChange={onChangeInput}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
                     minLength="2"
                     maxLength="30"
                     disabled={!isEdit}
+                    error={errors.name}
                   />
 
                   <Input
-                    value={isEdit ? inputsData.email : inputsData.email || currentUser.email}
+                    value={isEdit ? values.email || currentUser.email : currentUser.email}
                     name="email"
                     title="E-mail"
-                    type="email"
                     disabled={!isEdit}
-                    onChange={onChangeInput}
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    error={errors.email}
+                    pattern={EMAIL_REGEXP}
                   />
+
                 </>
               }
+
             </Form>
 
           </div>
@@ -63,7 +68,7 @@ export default function Profile({ isLoggedIn, logout, editProfile }) {
           <div className="profile__footer">
             <button
               className="profile__footer-button"
-              onClick={handleLogout} >
+              onClick={logout} >
               Выйти из аккаунта
             </button>
           </div>
