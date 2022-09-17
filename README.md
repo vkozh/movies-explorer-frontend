@@ -2,8 +2,6 @@
 
 https://filmopoisk.nomoredomains.xyz/
 
-ПР: https://github.com/vkozh/movies-explorer-frontend/pull/2
-
 ## Диплом
 
 Сервис, в котором можно найти фильмы по запросу и сохранить в личном кабинете.
@@ -24,7 +22,7 @@ https://filmopoisk.nomoredomains.xyz/
 
 ## Технологии
 
-- JS
+- TypeScript
 - React
 - HTML
 - CSS
