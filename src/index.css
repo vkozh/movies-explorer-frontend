@@ -37,6 +37,6 @@ button:disabled {
   background-color: var(--middle-gray);
 }
 
-nobr {
+.nobr {
   white-space: nowrap;
 }
