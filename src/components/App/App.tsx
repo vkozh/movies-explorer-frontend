@@ -4,84 +4,98 @@ import Main from "../Main/Main";
 import Movies from "../Movies/Movies";
 import Profile from "../Profile/Profile";
 import Register from "../Register/Register";
-import NotFound from "../NotFound/NotFound"
+import NotFound from "../NotFound/NotFound";
 import Login from "../Login/Login";
 import SavedMovies from "../SavedMovies/SavedMovies";
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
 import mainApi from "../../utils/MainApi";
-import { CurrentUserContext } from "../../contexts/CurrentUserContext"
+import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 import { beatfilmMoviesApi, moviesApi } from "../../utils/MoviesApi";
-import { checkIsSaved, formatMovies, fillAllIsSaved, getDataLS } from "../../utils/utils";
+import {
+  checkIsSaved,
+  formatMovies,
+  fillAllIsSaved,
+  getDataLS,
+} from "../../utils/utils";
 import ErrorPopup from "../ErrorPopup/ErrorPopup";
 import { IMovie, IUser, IMessage } from "../types/types";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { fetchMovies } from "../../features/moviesSlice";
+import { fetchSavedMovies } from "../../features/savedMoviesSlice";
+import { fetchUser } from "../../features/user";
 
 function App() {
-
   const [isLoggedIn, setIsloggedIn] = useState<boolean | undefined>(undefined);
   const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [movies, setMovies] = useState<IMovie[]>(getDataLS('movies') || []);
-  const [savedMovies, setSavedMovies] = useState<IMovie[]>(getDataLS('savedMovies') || []);
+  const [movies, setMovies] = useState<IMovie[]>(getDataLS("movies") || []);
+  const [savedMovies, setSavedMovies] = useState<IMovie[]>(
+    getDataLS("savedMovies") || []
+  );
   const [isShowMessage, setIsShowMessage] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>('');
+  const [message, setMessage] = useState<string>("");
   const [isLoadData, setIsLoadData] = useState<boolean>(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const newMovies = useAppSelector((state) => state.movies.movies);
+  const newSavedMovies = useAppSelector((state) => state.savedMovies.movies);
+  const newUser = useAppSelector((state) => state.user);
+  const dispatch = useAppDispatch();
 
   const showMessage = (message: IMessage | string): void => {
-    if(typeof message === 'string')
-      setMessage(message)
-    else
-      setMessage(message.message)
-    location.pathname !== '/' && setIsShowMessage(true)
-  }
+    if (typeof message === "string") setMessage(message);
+    else setMessage(message.message);
+    location.pathname !== "/" && setIsShowMessage(true);
+  };
 
   const setVisitData = (user: IUser): void => {
-    setIsloggedIn(true)
+    setIsloggedIn(true);
     setCurrentUser(user);
-  }
+  };
 
   const clearVisitData = (): void => {
-    setIsloggedIn(false)
+    setIsloggedIn(false);
     setCurrentUser(undefined);
     localStorage.clear();
-    navigate("/", { replace: true })
-  }
+    navigate("/", { replace: true });
+  };
 
   const tokenCheck = (): void => {
+    dispatch(fetchUser());
+
     mainApi
       .getUser()
       .then((user: IUser) => {
         if (user) {
-          setVisitData(user)
+          setVisitData(user);
           navigate(location.pathname, { replace: true });
         }
       })
       .catch((e: string) => {
         showMessage(e);
         clearVisitData();
-        navigate('/signin');
-      })
-  }
+        navigate("/signin");
+      });
+  };
 
   const handleSignin = (data: IUser): void => {
     mainApi
       .login(data)
       .then((user: IUser) => {
-        setVisitData(user)
-        navigate('/movies', { replace: true })
+        setVisitData(user);
+        navigate("/movies", { replace: true });
       })
-      .catch(showMessage)
-  }
+      .catch(showMessage);
+  };
 
   const handleSignup = ({ name, email, password }: IUser): void => {
     mainApi
       .register({ name, email, password })
       .then(() => {
-        handleSignin({ email, password })
+        handleSignin({ email, password });
       })
-      .catch(showMessage)
-  }
+      .catch(showMessage);
+  };
 
   const handleLogout = (): void => {
     mainApi
@@ -89,27 +103,32 @@ function App() {
       .then(() => {
         clearVisitData();
       })
-      .catch(showMessage)
-  }
+      .catch(showMessage);
+  };
 
   const handleEditProfile = async (data: IUser) => {
     mainApi
       .updateProfile(data)
       .then(({ ...userData }) => {
         setCurrentUser({ ...userData });
-        showMessage('Сохранено');
+        showMessage("Сохранено");
       })
-      .catch(showMessage)
-  }
+      .catch(showMessage);
+  };
 
   const loadData = (): void => {
+    dispatch(fetchMovies(setIsLoading));
+    dispatch(fetchSavedMovies(setIsLoading));
+    const checkedMovies = checkIsSaved(newMovies, newSavedMovies);
 
-    isLoggedIn === true && !isLoadData && !movies.length &&
-      Promise
-        .all([
-          beatfilmMoviesApi.getMovies(setIsLoading),
-          moviesApi.getMovies(setIsLoading)])
-        .then(data => {
+    isLoggedIn === true &&
+      !isLoadData &&
+      !movies.length &&
+      Promise.all([
+        beatfilmMoviesApi.getMovies(setIsLoading),
+        moviesApi.getMovies(setIsLoading),
+      ])
+        .then((data) => {
           const formattedMovies = formatMovies(data[0]) as IMovie[];
           const savedMovies = fillAllIsSaved(data[1]) || {};
           const checkedMovies = checkIsSaved(formattedMovies, savedMovies);
@@ -118,8 +137,10 @@ function App() {
           setSavedMovies(savedMovies);
 
           localStorage.setItem(`savedMovies`, JSON.stringify(savedMovies));
-          localStorage.setItem(`movies-searchResult`, JSON.stringify(
-            formattedMovies.map((m: IMovie) => m.movieId)))
+          localStorage.setItem(
+            `movies-searchResult`,
+            JSON.stringify(formattedMovies.map((m: IMovie) => m.movieId))
+          );
         })
         .catch(showMessage);
 
@@ -128,22 +149,22 @@ function App() {
 
   useEffect(() => {
     movies && localStorage.setItem(`movies`, JSON.stringify(movies));
-  }, [movies])
+  }, [movies]);
 
   useEffect(() => {
-    savedMovies && localStorage.setItem(`savedMovies`, JSON.stringify(savedMovies));
-  }, [savedMovies])
+    savedMovies &&
+      localStorage.setItem(`savedMovies`, JSON.stringify(savedMovies));
+  }, [savedMovies]);
 
   useEffect(() => {
     tokenCheck();
-  }, [])
+  }, []);
 
   return (
     <>
       <CurrentUserContext.Provider value={currentUser}>
         <div className="page">
           <Routes>
-
             <Route
               path="/movies"
               element={
@@ -159,7 +180,8 @@ function App() {
                   setSavedMovies={setSavedMovies}
                   loadData={loadData}
                 />
-              } />
+              }
+            />
 
             <Route
               path="/saved-movies"
@@ -176,7 +198,8 @@ function App() {
                   setSavedMovies={setSavedMovies}
                   loadData={loadData}
                 />
-              } />
+              }
+            />
 
             <Route
               path="/profile"
@@ -189,7 +212,8 @@ function App() {
                   setCurrentUser={setCurrentUser}
                   setMessage={setMessage}
                 />
-              } />
+              }
+            />
 
             <Route
               path="/signin"
@@ -199,7 +223,8 @@ function App() {
                   isLoggedIn={!isLoggedIn}
                   signin={handleSignin}
                 />
-              } />
+              }
+            />
 
             <Route
               path="/signup"
@@ -209,29 +234,23 @@ function App() {
                   isLoggedIn={!isLoggedIn}
                   signup={handleSignup}
                 />
-              } />
+              }
+            />
 
-            <Route
-              path="/"
-              element={
-                <Main isLoggedIn={isLoggedIn} />
-              } />
+            <Route path="/" element={<Main isLoggedIn={isLoggedIn} />} />
 
-            <Route
-              path="*"
-              element={<NotFound />} />
-
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
       </CurrentUserContext.Provider>
 
-      {isShowMessage &&
+      {isShowMessage && (
         <ErrorPopup
           message={message}
           setMessage={setMessage}
           setIsShowMessage={setIsShowMessage}
         />
-      }
+      )}
     </>
   );
 }
