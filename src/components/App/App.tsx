@@ -10,43 +10,49 @@ import SavedMovies from "../SavedMovies/SavedMovies";
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
 import mainApi from "../../utils/MainApi";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext";
-import { beatfilmMoviesApi, moviesApi } from "../../utils/MoviesApi";
+// import { beatfilmMoviesApi, moviesApi } from "../../utils/MoviesApi";
 import {
-  checkIsSaved,
-  formatMovies,
-  fillAllIsSaved,
-  getDataLS,
+  dCheckIsSaved,
+  // checkIsSaved,
+  // formatMovies,
+  // fillAllIsSaved,
+  // getDataLS,
 } from "../../utils/utils";
 import ErrorPopup from "../ErrorPopup/ErrorPopup";
 import { IMovie, IUser, IMessage } from "../types/types";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { fetchMovies } from "../../features/moviesSlice";
+import { fetchMovies, saveMovies } from "../../features/moviesSlice";
 import { fetchSavedMovies } from "../../features/savedMoviesSlice";
-import { fetchUser } from "../../features/user";
+import { fetchUser } from "../../features/userSlice";
 
 function App() {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [isLoggedIn, setIsloggedIn] = useState<boolean | undefined>(undefined);
   const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [movies, setMovies] = useState<IMovie[]>(getDataLS("movies") || []);
-  const [savedMovies, setSavedMovies] = useState<IMovie[]>(
-    getDataLS("savedMovies") || []
-  );
+  // const [movies, setMovies] = useState<IMovie[]>(getDataLS("movies") || []);
+  // const [savedMovies, setSavedMovies] = useState<IMovie[]>(
+  //   getDataLS("savedMovies") || []
+  // );
   const [isShowMessage, setIsShowMessage] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const [isLoadData, setIsLoadData] = useState<boolean>(false);
-  const navigate = useNavigate();
   const location = useLocation();
-  const newMovies = useAppSelector((state) => state.movies.movies);
-  const newSavedMovies = useAppSelector((state) => state.savedMovies.movies);
-  const newUser = useAppSelector((state) => state.user);
-  const dispatch = useAppDispatch();
+  const newIsLoading = useAppSelector((state) => state.movies.loading);
+  const newError = useAppSelector((state) => state.movies.error);
+  const dMovies = useAppSelector((state) => state.movies.movies);
+  const dSavedMovies = useAppSelector((state) => state.savedMovies.movies);
 
   const showMessage = (message: IMessage | string): void => {
     if (typeof message === "string") setMessage(message);
     else setMessage(message.message);
     location.pathname !== "/" && setIsShowMessage(true);
   };
+
+  useEffect(() => {
+    newError && showMessage(newError);
+  }, [newError]);
 
   const setVisitData = (user: IUser): void => {
     setIsloggedIn(true);
@@ -117,44 +123,62 @@ function App() {
   };
 
   const loadData = (): void => {
-    dispatch(fetchMovies(setIsLoading));
-    dispatch(fetchSavedMovies(setIsLoading));
-    const checkedMovies = checkIsSaved(newMovies, newSavedMovies);
+    if (isLoggedIn === true && !isLoadData) {
+      const loadMovies = dispatch(fetchMovies(setIsLoading));
+      const loadSavedMovies = dispatch(fetchSavedMovies(setIsLoading));
 
-    isLoggedIn === true &&
-      !isLoadData &&
-      !movies.length &&
-      Promise.all([
-        beatfilmMoviesApi.getMovies(setIsLoading),
-        moviesApi.getMovies(setIsLoading),
-      ])
+      Promise.all([loadMovies, loadSavedMovies])
         .then((data) => {
-          const formattedMovies = formatMovies(data[0]) as IMovie[];
-          const savedMovies = fillAllIsSaved(data[1]) || {};
-          const checkedMovies = checkIsSaved(formattedMovies, savedMovies);
+          const movies = data[0].payload as IMovie[];
+          const savedMovies = data[1].payload as IMovie[];
 
-          setMovies(checkedMovies);
-          setSavedMovies(savedMovies);
-
-          localStorage.setItem(`savedMovies`, JSON.stringify(savedMovies));
-          localStorage.setItem(
-            `movies-searchResult`,
-            JSON.stringify(formattedMovies.map((m: IMovie) => m.movieId))
-          );
+          // mark saved movies in dMovies with isSaved = true/false from SavedMovies data
+          const checkedMovies = dCheckIsSaved(movies, savedMovies);
+          dispatch(saveMovies(checkedMovies));
         })
         .catch(showMessage);
+    }
+    //   isLoggedIn === true &&
+    //     !isLoadData &&
+    //     !movies.length &&
+    //     Promise.all([
+    //       beatfilmMoviesApi.getMovies(setIsLoading),
+    //       moviesApi.getMovies(setIsLoading),
+    //     ])
+    //       .then((data) => {
+    //         const formattedMovies = formatMovies(data[0]) as IMovie[];
+    //         const savedMovies = fillAllIsSaved(data[1]) || {};
+    //         const checkedMovies = checkIsSaved(formattedMovies, savedMovies);
+
+    //         setMovies(checkedMovies);
+    //         setSavedMovies(savedMovies);
+
+    //         localStorage.setItem(`savedMovies`, JSON.stringify(savedMovies));
+    //         localStorage.setItem(
+    //           `movies-searchResult`,
+    //           JSON.stringify(formattedMovies.map((m: IMovie) => m.movieId))
+    //         );
+    //       })
+    // .catch(showMessage);
 
     setIsLoadData(true);
   };
 
-  useEffect(() => {
-    movies && localStorage.setItem(`movies`, JSON.stringify(movies));
-  }, [movies]);
+  // useEffect(() => {
+  //   movies && localStorage.setItem(`movies`, JSON.stringify(movies));
+  // }, [movies]);
 
-  useEffect(() => {
-    savedMovies &&
-      localStorage.setItem(`savedMovies`, JSON.stringify(savedMovies));
-  }, [savedMovies]);
+  // useEffect(() => {
+  //   savedMovies &&
+  //     localStorage.setItem(`savedMovies`, JSON.stringify(savedMovies));
+  // }, [savedMovies]);
+
+  // useEffect(() => {
+  //   if (Object.keys(dMovies).length && Object.keys(dSavedMovies).length) {
+  //     const checkedMovies = dCheckIsSaved(dMovies, dSavedMovies);
+  //     dispatch(saveMovies(checkedMovies));
+  //   }
+  // }, [dMovies, dSavedMovies, dispatch]);
 
   useEffect(() => {
     tokenCheck();
@@ -170,15 +194,20 @@ function App() {
               element={
                 <ProtectedRoute
                   component={Movies as React.ComponentType}
-                  isLoggedIn={isLoggedIn}
-                  setMovies={setMovies}
-                  movies={movies}
-                  isLoading={isLoading}
-                  setIsLoading={setIsLoading}
-                  showMessage={showMessage}
-                  savedMovies={savedMovies}
-                  setSavedMovies={setSavedMovies}
                   loadData={loadData}
+                  isLoggedIn={isLoggedIn}
+                  showMessage={showMessage}
+                  // with redux
+                  movies={dMovies}
+                  savedMovies={dSavedMovies}
+                  isLoading={newIsLoading}
+                  // with local storage and state
+                  // isLoading={isLoading}
+                  // setIsLoading={setIsLoading}
+                  // movies={movies}
+                  // setMovies={setMovies}
+                  // savedMovies={savedMovies}
+                  // setSavedMovies={setSavedMovies}
                 />
               }
             />
@@ -188,15 +217,20 @@ function App() {
               element={
                 <ProtectedRoute
                   component={SavedMovies}
-                  movies={movies}
-                  setMovies={setMovies}
                   isLoggedIn={isLoggedIn}
-                  isLoading={isLoading}
-                  setIsLoading={setIsLoading}
                   showMessage={showMessage}
-                  savedMovies={savedMovies}
-                  setSavedMovies={setSavedMovies}
                   loadData={loadData}
+                  // with redux
+                  movies={dMovies}
+                  savedMovies={dSavedMovies}
+                  isLoading={newIsLoading}
+                  // with local storage and state
+                  // isLoading={isLoading}
+                  // setIsLoading={setIsLoading}
+                  // movies={movies}
+                  // setMovies={setMovies}
+                  // savedMovies={savedMovies}
+                  // setSavedMovies={setSavedMovies}
                 />
               }
             />

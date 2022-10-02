@@ -1,12 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { IMovie } from "../components/types/types";
+import { IMessage, IMovie } from "../components/types/types";
 import { beatfilmMoviesApi } from "../utils/MoviesApi";
 import { formatMovies, getDataLS } from "../utils/utils";
 
 type InitialState = {
   loading: boolean;
   movies: IMovie[];
-  error: string | undefined;
+  error: string | undefined | IMessage;
 };
 
 const initialState: InitialState = {
@@ -27,7 +27,11 @@ export const fetchMovies = createAsyncThunk(
 const moviesSlice = createSlice({
   name: "movies",
   initialState,
-  reducers: {},
+  reducers: {
+    saveMovies: (state, action) => {
+      state.movies = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchMovies.pending, (state) => {
       state.loading = true;
@@ -45,4 +49,5 @@ const moviesSlice = createSlice({
   },
 });
 
+export const { saveMovies } = moviesSlice.actions;
 export default moviesSlice.reducer;

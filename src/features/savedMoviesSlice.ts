@@ -27,7 +27,11 @@ export const fetchSavedMovies = createAsyncThunk(
 const savedMoviesSlice = createSlice({
   name: "savedMovies",
   initialState,
-  reducers: {},
+  reducers: {
+    saveSavedMovies: (state, action) => {
+      state.movies = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchSavedMovies.pending, (state) => {
       state.loading = true;
@@ -45,4 +49,5 @@ const savedMoviesSlice = createSlice({
   },
 });
 
+export const { saveSavedMovies } = savedMoviesSlice.actions;
 export default savedMoviesSlice.reducer;
